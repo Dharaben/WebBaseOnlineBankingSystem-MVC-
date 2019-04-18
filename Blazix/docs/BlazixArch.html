@@ -1,0 +1,49 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h1>
+Overview</h1>
+The Blazix Java Server consists of a Web Server, an EJB Server, and various
+tools, including an EJB generator wizard called "Blizzard", JSP debugging
+code generator, Web application packager, Remote administrator, and clustering
+support software.
+<p>Several Blazix Web Server can be put together in co-operative clusters
+managed by front-end load-balancing equipment.&nbsp; EJB Servers can similarly
+share the processing load via EJB Naming Servers.
+<p>The separation of the Web Servers and the EJB servers allows much flexibility
+in designing application architectures.&nbsp; For instance, Web Servers
+can be accessible via the firewall, without needing to expose the EJB Servers
+which can be completely inside the firewall and still provide the processing
+needed by the Web Servers.&nbsp; The number of Web Servers or the number
+of EJB servers can be grown independently of the other, based upon the
+load characteristics.
+<p>The diagram below shows a possible deployment scenario.&nbsp; The web
+servers form one cluster, and are backed up by cluster session backup servers.&nbsp;
+The EJB servers form another cluster.&nbsp; Thus as the load increases,
+the clusters can be easily grown (scalability and performance.)&nbsp;&nbsp;
+And at any one time the failure of any one server is not critical because
+the other servers in the clusters can pick up the load (reliability.)
+<p><img SRC="BlazixArch.gif" height=320 width=470 align=ABSCENTER></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Clustering in Blazix</h2>
+Blazix provides clustering support for Web servers, EJB servers, and JMS
+servers.&nbsp;
+<p>In all cases, Blazix clustering supports the use of multiple servers
+to perform the task (load sharing) and providing support when a server
+fails (fail-over).
+<p>Blazix clustering is designed to avoid any single-point-of-failures.&nbsp;
+For web-servers, shared filesystems used for saving session data can be
+a single points of failure.&nbsp; Therefore Blazix provides the option
+of using cluster-backup servers instead of a shared filesytem.&nbsp; As
+long as at least two cluster-backup servers are operational, session data
+will be backed up in two locations.
+<p>For EJB servers and JMS servers, as well as for many Web operations,
+the database may still be a single point of failure.&nbsp; This is outside
+the scope of Blazix, and it is recommended that the database selected should
+provide distributed fail-over support.
+<p>Each type of clustering is explained in the sections below:
+<p><a href="#web">Web Server Clustering</a>
+<br><a href="#ejb">EJB Server Clustering</a>
+<br><a href="#jms">JMS Server Clustering</a>
+<p><a NAME="web"></a><b>Web Server Clustering</b>:&nbsp; For Web servers,
+Blazix supports DNS based clustering.&nbsp; This requires an addtional
+DNS based front-end load balancer, not included in Blazix.&nbsp; Such load
+balancers are available from third party vendors.&nbsp; (Connector-based
+load balancing is not included in Blazix.&nbsp; It was not clear what the
+advantage of such a load-balancer would be in the context of Blazix.&nbsp;
+Such a load-balancer has a single-point-of-failure and a single load-chokepoint,
+which are against the goals of Blazix clustering.&nbsp; Nor are such load-balancers
+very useful for load-handling, unless the application server is&nbsp; much
+slower than the front-end server.&nbsp; Since the same term "load-balancer"
+is used for this case as well, it could have misled Blazix users into thinking
+they were getting something much more powerful than what they were actually
+getting.&nbsp; To avoid such misrepresentation, the Desiderata Software
+policy is that this feature is not included in the default installation
+of Blazix.&nbsp; However, if any customers of a Blazix web-server enterprise
+license would like a connector-based load balancer, it will be provided
+by Desiderata Software at no extra charge.)
+<p>Blazix is designed to work with two type of DNS front end load balancers.&nbsp;
+In Blazix, these are called "<tt>smart</tt>" and "<tt>random</tt>".&nbsp;
+A "<tt>smart</tt>" load balancer is one which is session-aware, and will
+send the connections from the same client to the same server.&nbsp; A "<tt>random</tt>"
+load balancer is not session-aware.&nbsp; Blazix will work with both types
+of load balancers, but will optimize overhead if working with "<tt>smart</tt>"
+load balancers.
+<p>Blazix also offers two choices of backing up session data.&nbsp; Session
+data can be backed up on a shared file server, or preferable (for efficiency
+as well as for avoiding a single-point-of-failure) on the Blazix cluster-backup
+servers.&nbsp; Cluster-backup servers store session data in memory and
+provide it in the case of fail-over.
+<p>To set up web-server clustering, create a cluster configuration file
+and specify the names of your web-servers and cluster-backup servers in
+it.&nbsp; The file must be identical at all servers.
+<p><b>Important:</b>&nbsp; Web applications written for participation in
+a cluster must ensure that all session data is serializable.&nbsp; Otherwise
+the data will not be shareable and therefore cannot be backed up for clustering
+purposes.
+<p>When hot-deploying applications that are deployed on multiple servers
+and that use session data, the uploads must be done using the "upload and
+rescan" option, and all participating servers must be updated at once.&nbsp;
+This allows the administration tool to gather all server ids from participating
+servers and to redistribute all ids to all servers.&nbsp; This is neccessay
+in order that sessions that have already been started, continue to see
+the old version of the WAR file.
+<p><a NAME="ejb"></a><b>EJB Server Clustering:</b>&nbsp; In Blazix, EJB
+clustering is similar to Web clustering.&nbsp; But since EJB servers are
+often used internally and may not have a DNS based load-balancer, Blazix
+includes EJB "name servers".&nbsp; Any EJB server can be configured to
+also act as a name server.&nbsp; The EJB clients see one or more name servers.&nbsp;
+But the actual service may be provided by any EJB server registered with
+the name servers, or even by the name servers themselves (because name
+servers are not likely to be heavily loaded, they can also participate
+in EJB servicing.)
+<p>The EJB configuration file has options to specify that a particular
+EJB server should act as a name server.&nbsp; If an EJB server is not a
+name server, it should register itself with one or more name servers.
+<p>When an&nbsp; EJB request comes in, the name server assigns it to one
+of its registered EJB servers (that have the requested capability) in a
+round-robin fashion.
+<p>A failure during one single EJB connection is not automatically transferred
+because of the risk involved.&nbsp; (E.g. if the failure occured before
+a data item was written but the connection dropped before that fact could
+be reported back, automatic transfer may cause the data item to be written
+twice.&nbsp;&nbsp; In the other direction, if success were reported before
+actual data operation but the failure occurred right after the success
+report, the data item may never get written.&nbsp; Therefore it was considered
+unsafe to provide fully automatic fail-over in EJBs.)&nbsp; In EJBs, the
+fail-over must be handled by the programmer, who has the option to involve
+the end user or not, depending upon the operation.
+<p>However, the next EJB connction will automatically be given to an available
+and working server.
+<p><a NAME="jms"></a><b>JMS Server Clustering:</b>&nbsp; Each JMS server
+is identical in Blazix, and they all can act as an "entry point" to the
+cluster.&nbsp; The JMS client should know the name of one or preferably
+two JMS servers as the entry point servers.&nbsp; But once the JMS client
+has access, it will be serviced by any of the servers in the cluster using
+a least-used algorithm.&nbsp; If a server fails at any point during the
+service, the fail-over will be entirely automatic, and the client will
+receive the data as long as at least one server in the cluster continues
+to operate.
+<p>In the case of JMS - because of the much more controlled environment
+- Blazix JMS servers can correctly handle all points of failure, therefore
+there is no need for programmers or end users to be involved with the fail-over
+mechanism.&nbsp; The load balancing as well as fail-over is fully automatic.
+<p>To enable JMS clustering, simply add the JMS server names to the cluster
+configuration files and start all servers.&nbsp; If new JMS servers are
+added later on, they will be picked up by the cluster (via the shared database),
+but for future operations the names should also be added to all the cluster
+files.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

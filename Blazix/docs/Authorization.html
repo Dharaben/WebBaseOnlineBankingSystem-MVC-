@@ -1,0 +1,205 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Adding username and password to web pages and EJBs</h2>
+
+<h3>
+Basic authorization requirements</h3>
+In order to add username/password protection to web pages and EJBs, Blazix
+needs to be told two pieces of information:
+<ul>
+<li>
+What are the resources that should be placed under protection.</li>
+
+<li>
+What are the valid username/password combinations</li>
+</ul>
+Given these two pieces of information, the web pages are protected using
+the standard "Basic" or "Form" based authentication.&nbsp; In these methods,
+the end-user provides the username and password using standard user interfaces.&nbsp;
+The configuration file only needs to provide the information about whether
+to use "Basic" or "Form" based authentication, and parameters for the authentication
+method selected.
+<p>For Enterprise Java Beans, an additional mechanism is necessary whereby
+the client of the EJB can specify the username and password at runtime.&nbsp;
+In the case where the EJB is being accessed from a web-page, this is handled
+automatically, and the username/password supplied by the end-user is transmitted
+to the EJB as well.&nbsp; For other stand-alone EJB clients, a mechanism
+is provided to specify the username/password needed to access the EJB.
+<h3>
+Specifying the authentication method for the Web-Server</h3>
+For the web-server, the available authentication methods are "Basic" and
+"Form".&nbsp; In the "Basic" method, the user's browser presents the standard
+username/password dialog box to the user.&nbsp; In this method, the application
+has no control over the looks of this dialog.&nbsp; In the "Form" method,
+a particular HTML form is designated as the login form.&nbsp; This form
+must have two fields called "j_username" and "j_password".&nbsp; The "ACTION"
+of the form must be "j_security_check".&nbsp; In addition to the login
+form, an error page must be specified.&nbsp; If the username and password
+entered are not valid, the browser is redirected to the error page.
+<p>The authentication method is selected by the configurtion property application.&lt;appname>.authType
+and should be set to "Basic" or "Form".&nbsp; (For the default application,
+use the pre-defined application name "default".)&nbsp; For "Basic" authentication,
+an "application.&lt;appname>.authRealm" must be supplied.&nbsp; The user's
+browser displays this in the username/password dialog box.&nbsp; For "Form"
+authentication, application.&lt;appname>.authLoginForm and application.&lt;appname>.authErrorPage
+must be supplied.&nbsp; E.g.
+<blockquote>
+<pre>application.default.authType: Form
+application.default.authLoginForm: /login.html
+application.default.authErrorPage: /loginFailed.html</pre>
+</blockquote>
+or
+<blockquote>
+<pre>application.default.authType: Basic
+application.default.authRealm: TestSite</pre>
+</blockquote>
+<b>Blazix extension for logging out a user:</b>&nbsp; In the "Form" authentication
+method.&nbsp; The logged in user's name is stored in the session object
+as the attribute "<tt>desisoft.form.authorization</tt>".&nbsp; Remove this
+attribute to log out the user.&nbsp; Users cannot be logged out in the
+"Basic" method, because the browser stores the authentication information.
+<h3>
+Specifying the resources to protect</h3>
+This is done in the web-server configuration files, or web or EJB JAR files.&nbsp;
+In both cases, as required by the specifications, the authorization is
+based on a "role".&nbsp; Each role may have multiple usernames associated
+with it.&nbsp; In the web server, simply specifying a URL in a "role.&lt;role-name>.url"
+configuration parameter protects the URL.&nbsp; The URL may be specified
+as a full URL, or with wildcards of the form "&lt;path>/*" or "*.&lt;extension>".&nbsp;
+For example:
+<pre>role.name: user
+role.user.url: /safearea/*
+role.user.url: *.jsp</pre>
+The above configuration says that all URLs that start with /safearea/ and
+all URLs ending in ".jsp" are accessible to role name "user".&nbsp;&nbsp;
+If no roles have been specified for a URL, it is considered un-protected.
+<p>For packaged web archives, the WEB-INF/web.xml file contains the role
+names and the URLs being protected by the rols.
+<p>In the case of EJBs, the packaged EJB jar file contains a ejb-jar.xml
+file which lists the roles that have access to the EJB.&nbsp; There is
+no configuration-file equivalent for this, since there is no "default"
+EJB.
+<h3>
+Specifying the valid username/password combinations</h3>
+The valid username/password combinations are specified by supplying an
+implementation of the <a href="AuthCheck.html">desisoft.deploy.AuthCheck</a>
+interface.
+<p>Blazix includes a default file-based implementation of this interface.&nbsp;
+Therefore in the simplest scenario, the valid username/password combinations
+need to be added in a file and this file specified in the Web server or
+EJB server configuration file.
+<p>For the web-server, this is done on a per-application basis.&nbsp; For
+the basic case with only a single application, the application name "default"
+is used.&nbsp; For the EJB server, this is done on a server-wide basis.
+<p>If an implementation of <a href="AuthCheck.html">desisoft.deploy.AuthCheck</a>
+is being provided, the class implementing the interface is specified in
+"application.&lt;appname>.authClass" for web-server and "authClass" for
+EJB server.&nbsp; Any parameters for this class are provided by "application.&lt;appname>.authParam.*"
+or "authParam.*".
+<p>To use the default file-based implementation, do not provide the authClass,
+and provide a single parameter
+<br>"application.&lt;appname>.authParam.file" or "authParam.file".&nbsp;
+(The format of this file is described in the next section.)
+<p>Examles:
+<br>Web-server configuration file:
+<blockquote>
+<pre>application.default.authParam.file: htaccess.ini</pre>
+</blockquote>
+or
+<blockquote>
+<pre>application.default.authClass: MyAuth.MyAuthClass
+application.default.authParam.myParam: myParamValue</pre>
+</blockquote>
+EJB-server configuration file:
+<blockquote>
+<pre>authParam.file: htaccess.ini</pre>
+</blockquote>
+or
+<blockquote>
+<pre>authClass: MyAuth.MyAuthClass
+authParam.myParam: myParamValue</pre>
+</blockquote>
+
+<h3>
+Format of the default authorization file</h3>
+The authorization file contains one authorization entry per line.&nbsp;
+Each entry consists of comma-separated fields.&nbsp; Any lines starting
+with "#" or ";" are considered comments.
+<p>The first field in the line is the name of the URL or the EJB.&nbsp;
+It can be "*" to indicate that the authorization is&nbsp; for all URLs
+or EJBs.&nbsp; The second field in the line is the username.&nbsp; The
+third field is the password.&nbsp; Following this, one or more additional
+fields are specified for role names.&nbsp; An example of an authorization
+file is:
+<blockquote>
+<pre>*,user1,pwd1,admin,employee
+*,user2,pwd2,employee</pre>
+</blockquote>
+This file is specifying that the username and password "user1/pwd1" are
+valid for all URLs/EJBs, and allow access to "admin" and "employee" roles.&nbsp;
+The username and password "user2/pwd2" are valid for all URLs/EJBs and
+allow access to "employee" role only.
+<p>This password file protects all URLs listed in the web server configuration
+file, and all EJBs.&nbsp; To selectively protect EJBs, EJB names must be
+specified in the first field, and separate authorization files should be
+used for the web server and the EJB server.
+<h3>
+How EJB Cients can specify username/password</h3>
+Standalone EJB clients (clients other that JSP pages or servlets) can specify
+a username/password for an EJB server by either of of these two mechanisms:
+<p>When looking up an EJB home, specify the username and password by adding
+them to the environment for initiali JNDI context.&nbsp; The property names
+are "desisoft.ejb.username" and "desisoft.ejb.password".&nbsp; E.g.
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; Properties env = new Properties();
+&nbsp;&nbsp;&nbsp;&nbsp; env.put( "java.naming.factory.initial",
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "desisoft.ejb.client.JRMPFactory" );
+&nbsp;&nbsp;&nbsp;&nbsp; env.put("desisoft.ejb.nameServer1",
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "myEjbServer:2010" );
+&nbsp;&nbsp;&nbsp;&nbsp; env.put("desisoft.ejb.username", "user1" );
+&nbsp;&nbsp;&nbsp;&nbsp; env.put("desisoft.ejb.password", "pwd1" );
+&nbsp;&nbsp;&nbsp;&nbsp; javax.naming.Context ctx = new InitialContext(env);
+&nbsp;&nbsp;&nbsp;&nbsp; MyHomeInterface home =
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (MyHomeInterface) ctx.lookup( "MyEjbName" );</pre>
+Alternatively, the function
+<pre>desisoft.ejb.client.Misc.setAuthorization(
+&nbsp;&nbsp;&nbsp;&nbsp; String username,
+&nbsp;&nbsp;&nbsp;&nbsp; String pwd );</pre>
+can be called to specify username and password prior to obtaining an EJB
+home or object.
+<p>When obtaining an EJB home or object from a handle, only the second
+method is available because no JNDI lookup is involved.
+<p><b>Blazix extension for finding out the authorized user's name:</b>&nbsp;
+From an entity or a session bean, the current authorized username can be
+retrieved by calling the (base class) method
+<p>&nbsp;&nbsp;&nbsp; <tt>public String _ds_getUsername();</tt>
+<p>It will return the username if a user has been authorized, or null.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Desiderata Software">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+The Blazix tag library:&nbsp; Email tags</h2>
+The Blazix Email tags make it easy to send Email from a JSP page.&nbsp;
+They include the capability to send simple emails as well as emails with
+attachments.&nbsp; The email to be sent is enclosed with a <tt>blx:email</tt>
+start and end tags.&nbsp; Within this tag, the text of the email as well
+as recipients, attachments etc may be specified.
+<p>The <tt>blx:email</tt> tag requires a "<tt>host"</tt> and a "<tt>from"</tt>
+attributes.&nbsp; The "<tt>host</tt>" refers to the SMTP mailing host,
+also known as a "mail server".&nbsp; (This hostname may be found from most
+email program's settings.)&nbsp; The "<tt>from</tt>" refers to the sender's
+email address.
+<p>A simple mail may be sent simply as
+<p><tt>&lt;blx:email host="myhost.com" from="me@myhost.com"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to="somebody@somewhere.com"></tt>
+<br><tt>Hello.&nbsp; Just testing this email tag.</tt>
+<br><tt>&lt;/blx:email></tt>
+<p>The "To" field may also be specified by using the <tt>&lt;blx:emailTo></tt>
+tag, instead of as an attribute, e.g.
+<p><tt>&lt;% String target = "somebody@somewhere.com"; %></tt>
+<br><tt>&lt;blx:email host="myhost.com" from="me@myhost.com"></tt>
+<br><tt>&lt;blx:emailTo>&lt;%= target %>&lt;/blx:emailTo></tt>
+<br><tt>Hello.&nbsp; Just testing this email tag.</tt>
+<br><tt>&lt;/blx:email></tt>
+<p>The "CC" and "BCC" fields similarly have <tt>&lt;blx:emailCc></tt> and
+<tt>&lt;blx:emailBcc></tt>
+tags.
+<p>Finally, there is a <tt>&lt;blx:emailAttach></tt> tag.&nbsp; This tag
+is used to send attachments with the email.&nbsp; It can also be used to
+send HTML email, since HTML email is simply an email with an HTML file
+included as an attachment, and no leading text.
+<p>An example of sending an email with an attachment is:
+<p><tt>&lt;blx:email host="myhost.com" from="me@myhost.com"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; to="somebody@somewhere.com"></tt>
+<br><tt>Hello.&nbsp; Just testing this email tag with an attachment.</tt>
+<br><tt>&lt;blx:emailAttach file="C:\autoexec.bat"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; contentType="text/plain" name="autoexec.bat"/></tt>
+<br><tt>&lt;/blx:email></tt>
+<p>If the "file" attribute is not provided in the emailAttach tag, the
+attachment comes from the body of the tag.&nbsp; E.g.
+<br><tt>&lt;blx:email host="myhost.com" from="me@myhost.com"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+to="somebody@somewhere.com"></tt>
+<br><tt>Hello.&nbsp; Just testing this email tag with an attachment.</tt>
+<br><tt>&lt;blx:emailAttach name="test.html" contentType="text/html"></tt>
+<br><tt>&lt;jsp:include page="/myjsp.jsp"/></tt>
+<br><tt>&lt;/blx:emailAttach></tt>
+<br><tt>&lt;/blx:email></tt>
+<p>(Note that any files other than JSP files cannot be included using <tt>jsp:include</tt>
+because they will not use the JSP "<tt>out</tt>" -- for these file use
+the static @include directive instead of <tt>jsp:include</tt>.)
+<p>To send an HTML email, send the HTML as an attachment (if there are
+more than one attachments, make sure to make this one the first attachment),
+and specify the attributes "inline=true", "contentType=text/html", "plainText=true"
+on the emailAttach tag.&nbsp; Also specify "noText=true" on the email tag
+itself.
+<p>Individual tags are described below.
+<h3>
+blx:email</h3>
+This tag sends an email using the specified email server host and the specified
+sender address.&nbsp; The "to" address may be specified here or in the
+blx:emailTo tag, but at least one "to" address is required.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>host</td>
+
+<td>SMTP email server</td>
+
+<td>yes</td>
+</tr>
+
+<tr>
+<td>from</td>
+
+<td>Sender's email address</td>
+
+<td>yes</td>
+</tr>
+
+<tr>
+<td>to</td>
+
+<td>Receipient's email address</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>subject</td>
+
+<td>Email subject field</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>noText</td>
+
+<td>Only used with attachments.&nbsp; Set to "true" to indicate there should
+be no leading text, so the first attachment will be used as the body of
+the email.</td>
+
+<td>no</td>
+</tr>
+</table>
+
+<h3>
+blx:emailTo</h3>
+This tag can be used to supply one or more "To" fields for the email.&nbsp;
+The field value is supplied as the body of the tag.&nbsp; This tag must
+occur within an enclosing <tt>blx:email</tt> tag.
+<p>Attributes:&nbsp; None.
+<h3>
+blx:emailCc</h3>
+This tag can be used to supply one or more "Cc" fields for the email.&nbsp;
+The field value is supplied as the body of the tag.&nbsp; This tag must
+occur within an enclosing <tt>blx:email</tt> tag.
+<p>Attributes:&nbsp; None.
+<h3>
+blx:emailBcc</h3>
+This tag can be used to supply one or more "Bcc" fields for the email.&nbsp;
+The field value is supplied as the body of the tag.&nbsp; This tag must
+occur within an enclosing <tt>blx:email</tt> tag.
+<p>Attributes:&nbsp; None.
+<h3>
+blx:emailSubject</h3>
+This tag can be used to supply a "Subject" field for the email. The field
+value is supplied as the body of the tag.&nbsp; This tag must occur within
+an enclosing <tt>blx:email</tt> tag.
+<p>Attributes:&nbsp; None.
+<h3>
+blx:emailAttach</h3>
+This tag is used to add attachments to the outgoing email.&nbsp; This tag
+must occur within an enclosing <tt>blx:email</tt> tag.&nbsp; The content
+of the attachment can be specified by using the "<tt>file</tt>" attribute.&nbsp;
+If no "<tt>file</tt>" attribute is present, the content of the attachment
+comes from the body of the tag.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>file</td>
+
+<td>Path of a file that will be sent as an attachment.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>name</td>
+
+<td>Name of the attachment.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>contentType</td>
+
+<td>Content type of the attachment.&nbsp; Some examples are "text/plain"
+for text files, "text/html" for HTML files, "image/gif" or "image/jpeg"
+for JPEG files, and "application/octet-stream" for binary data.&nbsp; If
+in doubt, use "application/x-unknown-content-type".</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>inline</td>
+
+<td>Set this to "true" to specify that the receipient's email software
+should try to display the content within the body of the message (rather
+than as a "click to open/save" type icon.)&nbsp; When using this for HTML
+or text files, it is also a good idea to set "plainText" otherwise some
+email software&nbsp; may not be able to do an inline display.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>plainText</td>
+
+<td>Set this to "true" to specify that the attachment should be sent as
+plain text rather than being encoded.&nbsp; This can only be done with
+text files (e.g. plain text of HTML) and must never be done with image
+files or other binary data.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>targetFilename</td>
+
+<td>This can be set to the name of file that the recipient's email software
+will display by default, when saving the attachment.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>charset</td>
+
+<td>If the attachment's character set is other than "<tt>us-ascii</tt>",
+it should be specified here.</td>
+
+<td>no</td>
+</tr>
+</table>
+</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

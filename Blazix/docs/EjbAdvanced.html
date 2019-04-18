@@ -1,0 +1,234 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Blazix EJB for Avanced Users</h2>
+This page contains information needed by users who are already familiar
+with EJBs, to get started with Blazix.
+<blockquote><a href="#ejbc">The EJB Compiler</a>
+<br><a href="#initialContext">Obtaining the initial context</a>
+<br><a href="#finders">Entity bean finders</a>
+<br><a href="#auth">Specifying authentication information</a>
+<br><a href="#iiop">Using IIOP</a>
+<br><a href="#reserved">Reserved variable names</a>
+<br><a href="#autokey">Automatic primary key generation</a>
+<br><a href="#blizzard">Blizzard: The Blazix EJB wizard</a></blockquote>
+
+<h3>
+<a NAME="ejbc"></a>The EJB Compiler</h3>
+The Blazix EJB compiler is named <tt>blxejbc</tt> and is available from
+the command line after changing the path appropriately.&nbsp; See the <a href="Tools.html#blxejbc">tools
+documentation</a> for usage details.
+<h3>
+<a NAME="initialContext"></a>Obtaining the initial context</h3>
+In a Blazix JSP or servlet enviornment, the default object returned by
+InitialContext() is already configured so that the EJB homes are available
+at "<tt>java:comp/env/ejb/&lt;ejb-jndi-name></tt>".
+<p>In other environments, the environment passed to InitialContext properties
+needs to be set as shown below:
+<pre>Properties env = new Properties();
+env.put( "java.naming.factory.initial",
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "desisoft.ejb.client.JRMPFactory" );
+env.put( "desisoft.ejb.nameServer1",
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "localhost:2050" );
+Context ctx = new InitialContext( env );</pre>
+Instead of the "localhost:2050", the hostname and port of the EJB name
+server should be supplied (if there is only one EJB server running, the
+name server is the same as the EJB server.)
+<p>Multiple EJB name servers can be specified.&nbsp; They should be identically
+configured, and will be used for fail-over support.&nbsp; If the client
+cannot contact the server named at desisoft.ejb.nameServer1, it will try
+desisoft.ejb.nameServer2 and so on.
+<p>For using IIOP, <tt>java.naming.factory.initial</tt> should be set to
+<tt>desisoft.ejb.client.IIOPFactory</tt>
+as explained below.
+<h3>
+<a NAME="finders"></a>Entity Bean Finders</h3>
+In Blazix, simple finders can be defined just by naming them appropriately.&nbsp;
+E.g. if an entity bean has a field called "<tt>value</tt>", and its home
+interface defines a finder called "<tt>findValueEquals</tt>" which accepts
+a single argument, Blazix will automatically define the finder such that
+it returns the object or objects for which "value" equals the argument
+supplied.
+<p>The rules for defining simple finders are as follows.
+<pre>&lt;return-type> find&lt;field-name>Equals( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>LessThan( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>GreaterThan( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>LessEquals( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>GreaterEquals( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>NotEquals( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>Like( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>IsNull( &lt;field-type> arg );
+&lt;return-type> find&lt;field-name>Between( &lt;field-type> arg1,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;field-type> arg2 );
+&lt;return-type> find&lt;field-name>In( &lt;field-type> arg1,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;field-type> arg2,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;field-type> argn );</pre>
+Where &lt;return-type> can be <tt>Collection</tt> or <tt>Enumeration</tt>
+or remote interface's type, &lt;field-name> is one of the entity bean's
+defined fields, and &lt;field-type> is the type of the field.&nbsp; In
+addition "<tt>findAll</tt>" will find all the beans.
+<p>As long as the finder is named following these rules, nothing further
+need be done and Blazix will automatically make the finder available.
+<p>Example:
+<pre>Enumeration findIdGreaterThan( int arg );
+&nbsp;// Finds all beans with "id" field
+&nbsp;/// greater than "arg"
+Collection findTotalLessThan( float limit );
+&nbsp; // Finds all beans with "total" field
+&nbsp; // less than "limit"
+Bean findValueEquals( String arg );
+&nbsp; // Finds a bean where "value" field
+&nbsp; // equals "arg"
+Enumeration findValueIn( String choice1,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String choice2,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String choice3 );
+&nbsp; // Finds all beans where value is equal
+&nbsp; // to one of the args
+Enumeration findAll();
+&nbsp; // Finds all beans</pre>
+For more complex finders, Blazix requires a "finders description file".&nbsp;
+The finders description file is named <b>EjbFinders.ini</b>, and should
+be available to the EjbCompiler in the current working directory.&nbsp;
+It can also be placed in the EJB Jar file, but this is not recommended
+because that might make the Jar file inoperable with other EJB containers.
+<p>The finders description file consists of one command per line.&nbsp;
+If a line ends with the "-" character, it is assumed to continue on to
+the next line, so long lines can be broken into multiple lines.
+<p>Each line is of the form
+<br><tt>&nbsp; EntityBean: &lt;beanName></tt>
+<br>or
+<br><tt>&nbsp; &lt;finderName>: &lt;finderQueryString></tt>
+<p>The bean name must be defined before its finders.&nbsp; Finders for
+multiple entity beans can be defined in the finders definition file.&nbsp;
+Each bean should be named and then followed by the list of its finders.
+<p>The &lt;finderQueryString> is a SQL expression.&nbsp; The expression
+is expanded as a template.&nbsp; The caret character ^ is treated specially
+in this expression.&nbsp;&nbsp;&nbsp; If it is repeated twice, that is
+passed along as the caret character itself.&nbsp; Otherwise, it starts
+a "template field".
+<p>The caret character can be followed by the name of an entity bean field,
+or a number.&nbsp; If it is followed by a number, it refers to an argument
+passed to the finder method.&nbsp; ^1 refers to the first argument to the
+finder, ^2 refers to the second argument, and so on.
+<p>If the caret is followed by a field name (the field name can be enclosed
+in "[" and "]" characters and should be if it contains any unusual characters),
+it will be replaced by the value of that field.
+<p>After the SQL expression is expanded by replacing arguments and fields,
+it is used as the "WHERE" clause of a select expression.&nbsp; (The SQL
+expression itself should not contain a "WHERE".)
+<p>If a finder is defined in the finders definition file and also has a
+simple meaning as per the naming rules above, the definition in the finders
+definition file takes precedence.
+<p>If the query string is "<tt>all</tt>", all beans are returned.
+<p>Example:
+<pre>EntityBean: myBean
+findValueIs30: ^value = 30
+findValueEquals: ^value = ^1
+findValueEitherOr: ^[value]=^1 OR ^[value]=^2</pre>
+Here the first finder takes no arguments, second finder takes one argument,
+and third finder takes two arguments.&nbsp; All these finders assume there
+is an entity bean field called "value".&nbsp; Following are possible home
+interface declarations for these finders:
+<pre>Collection findValueIs30();
+Collection findValueEquals( int arg );
+Collection findValueEitherOr( int either,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int or );</pre>
+
+<h3>
+<a NAME="iiop"></a>Using IIOP</h3>
+To use IIOP:
+<ol>
+<li>
+Make sure IIOP is available.&nbsp; JDK 1.3 includes IIOP, but for JDK 1.2,
+IIOP must be downloaded separately and installed.</li>
+
+<li>
+Set the "<tt>ejb.protocol</tt>" property in the EJB configuration file(s)
+to "<tt>IIOP</tt>".</li>
+
+<li>
+Recompile any existing EJBs.</li>
+
+<li>
+Modify all EJB clients to use <tt>desisoft.ejb.client.IIOPFactory</tt>
+instead of <tt>desisoft.ejb.client.JRMPFactory</tt>.</li>
+
+<li>
+Make sure all EJB Context lookup results are passed to <tt>PortableRemoteObject.narrow</tt>
+before casting to the expected type.</li>
+
+<li>
+Add (or change) "<tt>ejb.protocol: IIOP</tt>" setting to all web-server
+configuration files.</li>
+
+<li>
+Stop and restart EJB server(s) and any affected web-servers.</li>
+</ol>
+When using IIOP, the "<tt>iiop.iorFile</tt>" property can be set to the
+path of a file.&nbsp; Blazix EJB server will write the IOR string to that
+file.&nbsp;
+<h3>
+<a NAME="auth"></a>Specifying authentication information</h3>
+The authentication information from a JSP or a servlet is automatically
+passed to the EJB server.
+<p>From other client programs, the authentication information is supplied
+by setting the environment variables <tt>desisoft.ejb.username</tt> and
+<tt>desisoft.ejb.password</tt>
+when obtaining the InitialContext.&nbsp; Alternatively, a call to
+<pre>desisoft.ejb.client.Misc.setAuthorization(
+&nbsp;&nbsp;&nbsp; String username,
+&nbsp;&nbsp;&nbsp; String pwd );</pre>
+can be made to specify the authentication information.&nbsp; When obtaining
+homes and beans from handles, if authentication is required, the second
+method must be used.
+<h3>
+<a NAME="reserved"></a>Reserved Variable Names</h3>
+Blazix reserves variables name starting with _ds or _desisoft or _blazix
+and attribute name strings starting with "desisoft." or "blazix.".&nbsp;
+These prefixes should not be used in development.
+<h3>
+<a NAME="blizzard"></a>Blizzard</h3>
+Blizzard is Blazix EJB wizard, which can be used to create simple frameworks
+for Entity and Session beans automatically.&nbsp; It creates the basic
+classes needed, and starts the framework off with simple getter/setter
+methods.&nbsp; Other methods may be added to the framework as needed.
+<h3>
+<a NAME="autokey"></a>Automatic primary key generation</h3>
+Entity bean primary keys can be automatically generated in Blazix EJB.&nbsp;
+For this, the primary keys must consist of a single field, and the primary
+key class must be <tt>Integer</tt>, <tt>String</tt> or <tt>Long</tt>.&nbsp;&nbsp;
+The automatic primary key generation must also be enabled for the given
+EJB name, using the "<tt><a href="Tools.html#autoejbkey">SetAutoEjbKey</a></tt>"
+command.&nbsp; If these conditions are met, and the primary key field is
+found to be <tt>null</tt> after return from an <tt>ejbCreate</tt> function,
+Blazix will automatically generate a primary key for the EJB.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Setting up Blazix JMS (Java Messaging Service)</h2>
+This page outlines the steps required to use the Blazix JMS server.
+<ol>
+<li>
+The Blazix JMS server requires a database (JDBC 1.x or 2.x compatible.)&nbsp;
+The first step is to create or assign a database for JMS server usage.&nbsp;
+Preferably, this database should not be used for any other purposes.&nbsp;
+But if it becomes necessary to use the database for other purposes, it
+must be ensured that any tables starting with "JMS" are not modified in
+any way.&nbsp; All tables created by Blazix JMS have names starting with
+"JMS".</li>
+
+<li>
+Create the configuration file <tt>jms.ini</tt>.&nbsp; The database selected
+above must be configured as the JMS datasource.&nbsp; See <a href="DataSources.html">configuring
+data sources</a> for information on configuring data sources, and <a href="JmsConfig.html">JMS
+Configuration</a> on how to specify the datasource as the JMS data source.&nbsp;
+A typical jms.ini file might look like:</li>
+
+<br>&nbsp;
+<ol><tt>dataSource.name: jmsData</tt>
+<br><tt>jms.dataSource: jmsData</tt>
+<br><tt>dataSource.jmsData.driverClass: driverVendor.driverClassName</tt>
+<br><tt>dataSource.jmsData.url: driverSpecificDatabaseUrl</tt>
+<br><tt>dataSource.jmsData.username: username</tt>
+<br><tt>dataSource.jmsData.password: password</tt>
+<br>&nbsp;</ol>
+
+<li>
+Run the Blazix JMS manager by running the <tt><a href="Tools.html#blxjmsmgr">blxjmsmgr</a></tt>
+command.&nbsp; Create the queue or topic names you need.</li>
+
+<li>
+Start the server by using the <a href="Tools.html#blxjmss">blxjmss</a>
+command.</li>
+
+<li>
+In the client code, to obtain an initial context for use by JMS clients,
+set the property "<tt>java.naming.factory.initial</tt>"&nbsp; to&nbsp;
+"<tt>desisoft.jms.jndi.JmsContextFactory</tt>" and set the property "<tt>desisoft.jms.server1</tt>"
+to "<tt>servername:&lt;portnumber></tt>", e.g. "<tt>myhost.com:3050</tt>".&nbsp;
+The following sample code shows these steps (assuming the JMS server is
+running at the machine "<tt>jmstest</tt>" at port 3050.)</li>
+
+<p><br><tt>&nbsp; Hashtable env = new Hashtable();</tt>
+<br><tt>&nbsp; env.put( "java.naming.factory.initial",</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; "desisoft.jms.jndi.JmsContextFactory"
+);</tt>
+<br><tt>&nbsp; env.put( "desisoft.jms.server1", "jmstest:3050" );</tt>
+<br><tt>&nbsp; Context messaging = new InitialContext( env );</tt>
+<p>Now this context can be used to lookup a JMS queue connection factory
+at the JNDI name "<tt>QueueConnectionFactory</tt>" and a JMS topic connection
+factory at the JNDI name "<tt>TopicConnectionFactory</tt>".&nbsp; The queues
+and topics configured using the JMS manager will be available at their
+names, e.g. a queue named "<tt>MyQueue</tt>" wil be available at the JNDI
+name "<tt>MyQueue</tt>".&nbsp; E.g.
+<p><tt>&nbsp; QueueConnectionFactory queueConnectionFactory;</tt>
+<br><tt>&nbsp; queueConnectionFactory = (QueueConnectionFactory)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; messaging.lookup("QueueConnectionFactory");</tt>
+<br><tt>&nbsp; Queue myQueue;</tt>
+<br><tt>&nbsp; myQueue = (Queue) messaging.lookup("MyQueue");</tt>
+<br>&nbsp;</ol>
+
+<h3>
+JMS Clustering</h3>
+Multiple JMS servers can be clustered to provide fully automatic failover
+support and load sharing.&nbsp; The cluster configuration file should list
+all the JMS servers.&nbsp; In the client code, multiple JMS servers can
+be named at "<tt>desisoft.jms.server1</tt>", "<tt>desisoft.jms.server2</tt>"
+etc.&nbsp; It is NOT necessary to list all JMS servers.&nbsp; Once the
+client has connected to any JMS server, it will have access to the full
+cluster.&nbsp; However, it is a good idea to provide at least two JMS server
+names to the client as cluster entry points, in case the first JMS server
+contacted is down for any reason.
+<p>The JMS servers within a cluster must share the same database.</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

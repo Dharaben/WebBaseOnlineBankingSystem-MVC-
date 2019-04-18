@@ -1,0 +1,236 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Desiderata Software">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+JMS-Server Configuration</h2>
+
+<h3>
+Location</h3>
+The configuration file may be specified using the -c switch in the command
+line, e.g.
+<blockquote>
+<pre>blxjmss -c c:\Mylocation\myejb.ini
+or
+java desisoft.jms.main.JmsServer -c c:\Mylocation\myejb.ini</pre>
+</blockquote>
+If the file is not specified on the command line, the JMS-server searches
+for a configuration file in the following order:
+<ul>
+<li>
+if the Java property "desisoft.jms.server.config" is set, it uses its value
+for the configuration file name.</li>
+
+<li>
+it looks in the hardwired locations c:\BlazixJmsServer.ini (for Windows)
+and /usr/blazix/JmsServer.ini (for Unix).</li>
+
+<li>
+it looks for an jms.ini file in the current directory.</li>
+</ul>
+The installation process does not create <i>jms.ini</i>, it must be manually
+created.
+<h3>
+Concepts</h3>
+<b>Clustering:</b>&nbsp; Multiple JMS servers may be started up in a co-operative
+"cluster".&nbsp; These provide load distribution and fail-over support.&nbsp;
+The JMS servers in a cluster are referred to&nbsp; as "peer server"s to
+each other.&nbsp; The members of the cluster should be specified in the
+cluster configuration file.&nbsp; The members of a cluster should have
+closely synchronized clocks.&nbsp; (See the "ack.timeout" value below.)
+<p><b>Data Sources:</b> Blazix JMS uses a database for message storage.&nbsp;
+One JDBC "data source" must be configured in the server, and must be specified
+as "jms.dataSource".
+<p>Data sources are configured by specifying a driverClass and a database
+url, or by providing an implementation of <a href="JdbcResourceFactory.html">desisoft.deploy.JdbcResourceFactory,</a>
+or by providing an ODBC name.
+<p>See <a href="DataSources.html">JDBC data sources</a> for more information.
+<br>&nbsp;
+<h3>
+Configuration Parameters</h3>
+The following configuration file parameters are available:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="98%" >
+<tr>
+<td>server.port</td>
+
+<td>Server port number, e.g. "3050".&nbsp; It must be an integer.</td>
+</tr>
+
+<tr>
+<td>server.address</td>
+
+<td>Server address (primarily for use on machines with multiple IP address.)&nbsp;
+This must be a valid hostname or an IP addresses.&nbsp; Optional.</td>
+</tr>
+
+<tr>
+<td>admin.port</td>
+
+<td>Port for administration access.&nbsp; If admin.port or admin.password
+are not specified, server will not be remotely administerable.&nbsp; If
+running inside a firewall, the admin port should be selected so that it
+is NOT accessible through the firewall.</td>
+</tr>
+
+<tr>
+<td>admin.password</td>
+
+<td>Password for administration access.</td>
+</tr>
+
+<tr>
+<td>dbms.refresh</td>
+
+<td>This specifies how often the JMS servers will check the database for
+unusual changes.&nbsp; In particular, this may be how long before a new
+queue/topic added to the database will become visible to the JMS servers.&nbsp;
+This is specified in seconds.&nbsp; The default is 240 seconds.&nbsp; This
+time should not be set too long, because there are various housekeeping
+chores that are also performed during the DBMS refresh.</td>
+</tr>
+
+<tr>
+<td>ack.timeout</td>
+
+<td>This is useful in clustered environments.&nbsp; If a server has failed,
+and its client has also failed simultaneously, the peer servers will perform
+cleanup after this duration.&nbsp; This is specified in seconds.&nbsp;
+The default is 300 seconds.
+<p>The time on all servers should be synchronized well within this tolerance.&nbsp;
+The default value of 300 seconds assumes that all JMS servers should have
+a time within 2 minutes of each other.
+<p>This value should be over 2 times the expected maximum time variance
+of the JMS servers.</td>
+</tr>
+
+<tr>
+<td>peer.reconnect</td>
+
+<td>This is useful in a clustered environment.
+<p>The JMS servers maintain connections with each other to provide minimal
+message delivery delay.&nbsp; If the connection is broken, the JMS server
+will attempt to reconnect after a certain interval, as specified by this
+parameter.&nbsp; The default value is 120 seconds.</td>
+</tr>
+
+<tr>
+<td>message.check</td>
+
+<td>This is useful in a clustered environment.
+<p>In case a message was delivered originally to a peer server, and the
+connection to the peer server is not yet up or is temporarily disconnected,
+the JMS servers also check the database periodically for maximum robustness.&nbsp;
+This parameter provides the interval.&nbsp; The default value is 20 seconds.</td>
+</tr>
+
+<tr>
+<td>authClass</td>
+
+<td>If provided, it must be the name of a class that implements <a href="AuthCheck.html">desisoft.deploy.AuthCheck</a>&nbsp;
+The class will be instantiated, and all username/password values for the
+incoming connections will be given to the instantiated object&nbsp; for
+authentication.&nbsp; Blazix provides a default file-based implementation
+of this class, see
+<a href="Authorization.html">Authorization.</a></td>
+</tr>
+
+<tr>
+<td>authParam.*</td>
+
+<td>Initialization parameters to be passed to the object instantiated for
+application.&lt;name>.authClass.&nbsp; The default file-based authorization
+requires one initialization parameter, application.&lt;name>.authParam.file,
+which should be set to the path of the file containing usernames and passwords.</td>
+</tr>
+
+<tr>
+<td>dataSource.name</td>
+
+<td>Name of a dataSource</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.jndiName</td>
+
+<td>JNDI name for dataSource, if not the same as the dataSource name.</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.driverClass</td>
+
+<td>JDBC driver's class name</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.url</td>
+
+<td>URL to be provided to JDBC driver</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.providerClass</td>
+
+<td>Class providing implementation of desisoft.deploy.JdbcResourceFactory</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.param.*</td>
+
+<td>Any initialization parameters to be passed to the implementation of
+desisoft.deploy.JdbcResourceFactory</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.odbc</td>
+
+<td>ODBC name for data source.</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.username</td>
+
+<td>Username for using in obtaining connections</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.password</td>
+
+<td>Password for using in obtaining connections</td>
+</tr>
+
+<tr>
+<td>jms.dataSource</td>
+
+<td>Name of the datasource to be used by JMS.</td>
+</tr>
+</table>
+
+<p>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Configuring Data Sources</h2>
+
+<h3>
+Data Sources</h3>
+JDBC data sources can be configured in the web-servers or the EJB servers.&nbsp;
+This is preferable to accessing the data sources directly from Java code,
+for various reasons, such as
+<ul>
+<li>
+This allows the servers to provide connection pooling for those sources
+that do not provide it.</li>
+
+<li>
+It allows the EJB servers to do transaction management as per EJB requirements.</li>
+
+<li>
+Blazix tag library can be utilized with configured data sources to simplify
+SQL programming.</li>
+
+<li>
+A uniform JNDI reference mechanism is made available for all data sources.</li>
+
+<li>
+It is very easy to switch or change data sources if they are configured
+in a configuration file instead of in code.</li>
+</ul>
+Both the web server configuration files and EJB server configuration files
+accept dataSource configurations.&nbsp; Each data source is given a name.&nbsp;
+It can also be given a "JNDI name".&nbsp; If a JNDI name is not separately
+provided, the dataSource name will also be used as the JNDI name.
+<p>The data source will be available at the JNDI location java:comp/env/jdbc/&lt;jndi-name>
+<h3>
+Using the data sources</h3>
+Sample usage (in a servlet/JSP or an Enterprise Java Bean) is demostrated
+below:
+<blockquote>
+<pre>import javax.sql.*;
+import javax.naming.*;
+import java.sql.*;
+
+Context ctx = new InitialContext();
+DataSource ds = (DataSource)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ctx.lookup( "java:comp/env/jdbc/myDataSource1" );
+Connection con = ds.getConnection();
+// or Connection con = ds.getConnection( username, pwd );
+// Use connection
+// ...
+con.close();</pre>
+</blockquote>
+When used in Blazix tag library SQL tags, the data source name can be specified
+directly, without the java:comp/env/jdbc/ prefix.
+<h3>
+Configuring the data sources</h3>
+The data source is provided by a third party JDBC supplier, or any supplier
+that implements the XAResource interface.
+<p>For typical JDBC suppliers, a class name and a URL needs to be specified.&nbsp;
+These can be specified using the dataSource.&lt;name>.driverClass and dataSource.&lt;name>.url
+properties, e.g.
+<pre>dataSource.name: myJdbc1
+dataSource.myJdbc1.driverClass: com.myprovider.jdbc.classname
+dataSource.myJdbc1.url: myhost:4500/mydatabase</pre>
+For ODBC databases, specify the ODBC name for the default ODBC JDBC connector,
+e.g.
+<pre>dataSource.name: myOdbcDatabase
+dataSource.myOdbcDataBase.odbc:&nbsp; myOdbcName</pre>
+Finally, some JDBC or other suppliers may provide an implementation of
+the Java interface XAResource.&nbsp; Some other suppliers may not provide
+a full XAResource implementation, but may provide connection pooling and/or
+data sources.
+<p>For these cases, a supplier specific class needs to be written.&nbsp;
+This class must implement the Blazix interface <a href="JdbcResourceFactory.html">desisoft.deploy.JdbcResourceFactory</a>.&nbsp;
+The name of this class needs to be supplied in the configuration file in
+the dataSource.&lt;name>.providerClass property.&nbsp; If any configuration
+time parameters are required, they can be specified using dataSource.&lt;name>.param.*
+property, e.g.
+<pre>dataSource.name: myDbms1
+dataSource.myDbms1.providerClass: Supplier.Wrapper.MyClass
+dataSource.myDbms1.param.dbmsName: mydbms1/myschema1</pre>
+Here the class "Supplier.Wrapper.MyClass" is a class specifically wrapping
+the particular supplier's XAResource or JDBC class(es), and providing an
+implementation of <a href="JdbcResourceFactory.html">desisoft.deploy.JdbcResourceFactory</a>.&nbsp;
+An instance of this class will be created, given the initialization parameters
+specified (in this case, "dbmsName = mydbms1/myschema1"), and asked to
+provide the resource.</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

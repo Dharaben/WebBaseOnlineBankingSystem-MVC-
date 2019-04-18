@@ -1,0 +1,83 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Server Configuration</h2>
+Blazix servers each use a separate configuration file.&nbsp; There is a
+configuration file for the web-server, one for the EJB server, and one
+for the cluster backup servers.&nbsp; There is also one for the Windows
+NT service.
+<p>The installation process adds a sample configuration file <i><a href="../web.ini" target="_new">web.ini</a></i>
+for the web-server, and <i><a href="../ejb.ini" target="_new">ejb.ini</a></i>
+for the EJB server.
+<p>All configuration files contain lines of the form
+<blockquote>
+<pre>property-name: value</pre>
+</blockquote>
+where property-name typically consists of three dot-separated parts: the
+type of the resource, a name for the resource and the property for which
+a value is being specified.&nbsp; For instance:
+<blockquote>
+<pre>dataSource.myJdbc1.url:&nbsp; myUrl
+dataSource.myJdbc1.class: myClass</pre>
+</blockquote>
+Here a "dataSource" resource is being configured.&nbsp; "myJdbc1" is a
+user-supplied name.&nbsp; The "url" property of the dataSource is being
+configured, and it is being set to the value "myUrl".&nbsp; The "class"
+property of the dataSource is being set to "myClass".
+<p>Before a user-supplied name such as <i>myJdbc1</i> can be used in a
+configuratin file, it must be "registered" using a ".name" line, e.g
+<blockquote>
+<pre>dataSource.name: myJdbc1</pre>
+</blockquote>
+There will often be several such name registrations, e.g.
+<blockquote>
+<pre>dataSource.name: myJdbc1
+dataSource.name: myJdbc2
+application.name: app1
+application.name: app2</pre>
+</blockquote>
+Properties which do not require a user-supplied name may have one or two
+dot-separated parts instead of three.
+<p>In most cases, the user-supplied name is just for internal use within
+the configuration file.&nbsp; E.g. by specifying a name for a dataSource,
+the user can specify parameters for various data sources.
+<p><b>Comments:</b>&nbsp; Lines starting with # or ; in a configuration
+file are considered comments.
+<p>&nbsp;&nbsp;&nbsp;&nbsp; <a href="WebConfig.html">Web Server Configuration</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="EjbConfig.html">EJB Server&nbsp;
+Configuration</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="ClusterConfig.html">Cluster Configuration</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="JmsConfig.html">JMS Server Configuration</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="ServerManagerConfig.html">Server
+Manager Configuration</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="DataSources.html">Data Source Configuration</a>
+<br>&nbsp;&nbsp;&nbsp;&nbsp; <a href="Authorization.html">Authorization
+Configuration</a></td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

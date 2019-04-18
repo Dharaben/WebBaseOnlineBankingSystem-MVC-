@@ -1,0 +1,68 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h3>
+Scheduling background and startup tasks</h3>
+Sometimes, there is a need to run a task in background, e.g. every half
+an hour.&nbsp; Similarly, sometimes there is a need to perform some tasks
+during server startup.
+<p>Blazix provides for both of these needs via the java.lang.Runnable interface.
+<p>To start a task in background, write a class that implements java.lang.Runnable,
+and provide the name of this class in the "<tt>startup.asynchronous</tt>"
+property of the server configuration file.&nbsp; During server startup,
+this class will be instantiated and started in its own thread.
+<p>The follow example shows a sample implementation of scheduling an operation
+to run every half an hour.&nbsp; This sample uses tight scheduling, for
+normal tasks it will be sufficient to invoke
+<br><tt>Thread.sleep( 1800000L );</tt>
+<br>In the sample below, the time taken by the task itself is accounted
+for as well, and no drift is allowed.&nbsp; The time taken to perform task
+should not exceed or approach the wait time.
+<pre><font size=-1>public class MyBackgroundScheduler implements Runnable {
+&nbsp;&nbsp;&nbsp; public void run()
+&nbsp;&nbsp;&nbsp; {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; long mark = System.currentTimeMillis();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (;;) {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mark += 1800000L; // 30 * 60 * 1000
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Next wakeup time is 30 minutes from now.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // This section will be executed every 30 minutes.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Perform tasks here
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println( "Performing background task" );
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; try {
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thread.sleep( mark -
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.currentTimeMillis());
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; } catch (InterruptedException ex) {}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }
+&nbsp;&nbsp;&nbsp; }
+}</font></pre>
+In order to perform tasks during server startup, implement a class as above
+and register it using "<tt>startup.synchronous</tt>".&nbsp; In this case,
+the "run" method of the class will be called during server startup.&nbsp;
+The "run" method must do its processing and then return.&nbsp; The server
+startup will not continue until the "run" method has returned.</td>
+</tr>
+</table>
+
+</body>
+</html>

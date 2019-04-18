@@ -1,0 +1,46 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h3>
+The .wsp and .xsp extensions</h3>
+Blazix includes support for utilizing the JSP technology for WML and XML
+files.
+<p>The .wsp extension is enabled in Blazix to work similar to the .jsp
+extension, but with the default mime-type of WML instead of HTML.
+<p>Similarly, the .xsp extension provides the mime-type text/xml.
+<p>Since XML is intended to provide machine-processable data, Blazix can
+easily provide dynamically generated XML content to any user agents that
+are seeking to accept XML.
+<p>With WML, there is further Blazix support in the form of appropriate
+forming of any error messages (such as exceptions.)
+<p><b>Note about .wsp files:</b>&nbsp; In .wsp files, the page should not
+be started with a JSP directive, but it should be started with the standard
+<tt>&lt;?xml
+</tt>syntax.&nbsp; This is because JSP directives on a line are replaced
+by an empty line as per JSP specifications.&nbsp; Therefore if the <tt>&lt;?xml</tt>
+is preceded by a line containing a JSP directive, it will not be the first
+item in the file.
+<p>JSP directives can be added after the first line.</td>
+</tr>
+</table>
+
+</body>
+</html>

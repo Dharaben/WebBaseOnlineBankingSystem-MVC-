@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "web-jsptaglib_1_1.dtd">
+
+<!-- built-in tag library descriptor for the Blazix blx library -->
+<!-- Copyright (C) Desiderata Software, 2001 -->
+<taglib>
+  <tlibversion>1.1</tlibversion>
+  <jspversion>1.1</jspversion>
+  <shortname>blx</shortname>
+  <info>
+	Desiderata Softare Blazix Tag Library
+  </info>
+
+  <tag>
+    <name>setProperty</name>
+    <tagclass>desisoft.jsp.tagext.SetProp</tagclass>
+    <bodycontent>empty</bodycontent>
+    <info>
+	Replacement for jsp:setProperty *, with better handling
+	of empty strings and exceptions.  A function may be named via onError
+	to handle errors and continue processing.  Empty values entered
+	by users reset the bean elements.  (Checkboxes must be specifed
+	in the checkbox property.)  Set stringNull to true if empty values
+	should reset string objects to null, false if empty values should
+	reset string objects to the empty string.
+    </info>
+    <attribute>
+    <name>name</name>
+    <required>true</required>
+    </attribute>
+    <attribute>
+    <name>property</name>
+    <required>true</required>
+    </attribute>
+    <attribute>
+    <name>onError</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+    <name>stringNull</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+    <name>checkbox</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+    <name>emptyInt</name>
+    <required>false</required>
+    </attribute>
+  </tag>
+  <tag>
+    <name>getProperty</name>
+    <tagclass>desisoft.jsp.tagext.GetProp</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+	Inverse of jsp:setProperty *, retrieves data from
+	bean and places in outgoing HTML.  Modifies
+	the INPUT, TEXTAREA and SELECT tags to insert
+	values from the bean.
+    </info>
+    <attribute>
+    <name>name</name>
+    <required>true</required>
+    </attribute>
+    <attribute>
+    <name>property</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+    <name>dateFormat</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+    <name>timeFormat</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+    <name>emptyInt</name>
+    <required>false</required>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>xlt</name>
+    <tagclass>desisoft.jsp.tagext.Translate</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag can be used to build internationalizable
+    JSPs.
+    
+    The text which should be translated is placed
+    inside this tag.  The tag itself has a a reference
+    id "ref".  This reference id is then used by
+    translators to provide other language translations.
+    
+    At runtime, the translation for the visitor's
+    language is pulled from the translation files
+    using the "id" attribute.
+    
+    All occurences of this tag must be inside an
+    "xlatFile" tag.
+    
+    A tool is provided that can be used to
+    gather all &lt;xlat%gt; tags together and place
+    them in a single property file, which the translators
+    can then use as their starting point.
+    </info>
+    <attribute>
+    <name>ref</name>
+    <required>true</required>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>xltFile</name>
+    <tagclass>desisoft.jsp.tagext.TranslationFile</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag can be used to build internationalizable
+    JSPs.
+    
+    The text which should be translated is placed
+    inside &lt;xlt%gt; tags.  All the &lt;xlat%gt; tags
+    are placed inside one or more &lt;xltFile%gt; tags.
+    
+    The name provided by the "file" attribute is
+    the "base" name of the translation file.  A locale
+    specific extension is then added to pull in
+    the appropriate language translation file.  For
+    instance if the base name is "myfile" and the
+    language is "fr", the translation file will be
+    "myfile_fr".  If the file has an extension, the
+    language id is added before the extension.  E.g.
+    for "myfile.txt" and language id "fr", the tag library
+    will look to see if "myfile_fr.txt" exists.
+    
+    A tool is provided that can be used to
+    gather all &lt;xlat%gt; tags together and place
+    them in a single property file, which the translators
+    can then use as their starting point.
+    </info>
+    <attribute>
+    <name>file</name>
+    <required>true</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>sqlConnection</name>
+    <tagclass>desisoft.jsp.tagext.SqlConnection</tagclass>
+    <info>
+    JDBC connections are identified by the JNDI names.
+    This tag allows a convenient way to provide a JNDI
+    name for several SQL tags without specifying it
+    in each one, by placing all of them inside this tag.
+    </info>     
+    <attribute>
+	<name>jndiName</name>
+	<required>true</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>sqlQuery</name>
+    <tagclass>desisoft.jsp.tagext.SqlQuery</tagclass>
+    <bodycontent>tagdependent</bodycontent>
+    <info>
+	This tag can be used to write a SQL query (which can
+	have embedded JSP expressions.)  The query
+	is associated with an id, which can then be referenced
+	by other SQL tags.
+    </info>
+
+    <attribute>
+	<name>id</name>
+	<required>true</required>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>sqlExecuteQuery</name>
+    <tagclass>desisoft.jsp.tagext.SqlExecuteQuery</tagclass>
+    <teiclass>desisoft.jsp.tagext.SqlExecuteQueryTei</teiclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+	A query iteration tag.
+
+	There is one required attribute: resultSet.
+	The body of the tag will be evaluated once for
+	each row of the query results.  "resultSet"
+	specifies the name of a variable.  This variable
+	will be declared within the scope of the query
+	body.  Each time through the loop, this variable
+	will be set to the next item in the resultset.
+
+    The query must be specified using one of these
+    methods:  by directly specifying the query by
+    using the "query" attribute or by referencing
+    the id of an "sqlQuery" tag using the
+    "queryRef" attribute.
+    
+    If the tag is not enclosed in a sqlConnection
+    tag, the JNDI name of the connection must be
+    specified by using the "connection" attribute.
+    </info>
+
+    <attribute>
+	<name>resultSet</name>
+	<required>true</required>
+    </attribute>
+    <attribute>
+	<name>query</name>
+	<required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+	<name>queryRef</name>
+	<required>false</required>
+    </attribute>
+    <attribute>
+	<name>connection</name>
+	<required>false</required>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>sqlGet</name>
+    <tagclass>desisoft.jsp.tagext.SqlGet</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag can be used to execute a query that
+    returns a single result.  The result is placed
+    in the JSP output.  The query can be specified
+    in the tag itself using the "query" attribute,
+    or by reference to a sqlQuery tag using the "queryRef"
+    attribute.
+    
+    If the tag is not enclosed in a sqlConnection
+    tag, the connection must be specified by
+    using the "connection" tag.
+    </info>
+    <attribute>
+    <name>query</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>queryRef</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+	<name>connection</name>
+	<required>false</required>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>sqlExecuteUpdate</name>
+    <tagclass>desisoft.jsp.tagext.SqlExecuteUpdate</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag can be used to execute a query containing
+    an INSERT or an UPDATE statement.  It has no output.
+    
+    The query can be specified
+    in the tag itself using the "query" attribute,
+    or by reference to a sqlQuery tag using the "queryRef"
+    attribute.
+    
+    If the tag is not enclosed in a sqlConnection
+    tag, the connection JNDI name must be specified by
+    using the "connection" tag.
+    </info>
+    <attribute>
+    <name>query</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>queryRef</name>
+    <required>false</required>
+    </attribute>
+    <attribute>
+	<name>connection</name>
+	<required>false</required>
+    </attribute>
+  </tag>
+
+  <tag>
+    <name>email</name>
+    <tagclass>desisoft.jsp.tagext.SendMail</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag is used to send an email.  The
+    To, CC, BCC, Subject, Body and attachment fields
+    should be enclosed within this tag.  The
+    email send operation takes place at the
+    end of this tag.
+    </info>
+    <attribute>
+    <name>host</name>
+    <required>true</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>from</name>
+    <required>true</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>to</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>subject</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>noText</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+  <tag>
+    <name>emailTo</name>
+    <tagclass>desisoft.jsp.tagext.MailTo</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag must be enclosed within an "email" tag.
+    It specifies the "To" field of the email.
+    
+    At least one "To" field must be supplied.
+    </info>
+  </tag>
+  
+  <tag>
+    <name>emailSubject</name>
+    <tagclass>desisoft.jsp.tagext.MailSubject</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag must be enclosed within an "email" tag.
+    If the "subject" field has not already been specified,
+    this tag can be used to specify it.
+    </info>
+  </tag>
+  
+  <tag>
+    <name>emailCc</name>
+    <tagclass>desisoft.jsp.tagext.MailCc</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag must be enclosed within an "email" tag.
+    It specifies the "Cc" field of the email.
+    
+    Zero or more "Cc" fields may be supplied.
+    </info>
+  </tag>
+  
+  <tag>
+    <name>emailBcc</name>
+    <tagclass>desisoft.jsp.tagext.MailBcc</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag must be enclosed within an "email" tag.
+    It specifies the "Bcc" field of the email.
+    
+    Zero or more "Bcc" fields may be supplied.
+    </info>
+  </tag>
+  
+  <tag>
+    <name>emailAttach</name>
+    <tagclass>desisoft.jsp.tagext.MailAttachment</tagclass>
+    <bodycontent>JSP</bodycontent>
+    <info>
+    This tag must be enclosed within an "email" tag.
+    It can be used to attach a file to
+    the outgoing email.  The tag may be more
+    than once, once for each attachment.  If
+    the "file" attribute is not specified, the
+    attachment must be specified in the body
+    of the tag.
+    </info>
+    <attribute>
+    <name>file</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>name</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>charset</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>plainText</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>contentType</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>inline</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+    <name>targetFilename</name>
+    <required>false</required>
+	<rtexprvalue>true</rtexprvalue>
+    </attribute>
+  </tag>
+  
+</taglib>

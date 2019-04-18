@@ -1,0 +1,61 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+desisoft.deploy.AuthCheck&nbsp; interface</h2>
+This interface is used to add authorization to web-server URLs and EJBs.&nbsp;
+The interface is defined as follows:
+<pre>public interface AuthCheck
+{
+&nbsp;&nbsp;&nbsp; void initialize( java.util.Hashtable props );
+&nbsp;&nbsp;&nbsp; boolean authorize(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String appname,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String username,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String password,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; javax.servlet.ServletRequest request );
+&nbsp;&nbsp;&nbsp; boolean isUserInRole(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String appname,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String username,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String role );
+&nbsp;&nbsp;&nbsp; boolean isUserInAnyRole(
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String appname,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String username,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String[] roles );
+}</pre>
+The "<tt>initialize</tt>" method is passed any initialization parameters
+from the configuration file.
+<p>The "<tt>appname</tt>" refers to the application or EJB bean name.&nbsp;
+The "<tt>authorize</tt>" method must return true to indicate authorization
+succeeded, false otherwise.&nbsp; The "<tt>isUserInRole"</tt> and "<tt>isUserInAnyRole"</tt>
+functions are called after authorization has succeeded, to check valid
+roles for the authorized user.&nbsp; The "<tt>username</tt>" parameter
+may be null to indicate no username was supplied.
+<p>The "<tt>request</tt>" parameter to "<tt>authorize</tt>" is <tt>null</tt>
+when validating EJBs.&nbsp; When validating website visitors, it can be
+used to work with the request, e.g. to retrieve other additional data from
+a database about the user who is logging in and place the additional data
+in the session.
+<br>&nbsp;</td>
+</tr>
+</table>
+
+</body>
+</html>

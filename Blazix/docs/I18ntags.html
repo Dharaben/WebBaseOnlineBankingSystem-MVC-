@@ -1,0 +1,161 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Desiderata Software">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+The Blazix tag library:&nbsp; Internationalization tags</h2>
+
+<h3>
+Translation Overview</h3>
+The Blazix internationalization tags make it possible to mark the natural-language
+parts of the JSPs, provide multiple translations for the natural-language
+parts, and have the appropriate translation be delivered at run-time.
+<p>There are two tags: &lt;blx:xltFile> and &lt;blx:xlt>.
+<p>The entire text which is to be translated should be placed inside &lt;blx:xltFile>
+and &lt;/blx:xltFile>.&nbsp; This tag provides a "base name" for the translation
+file.&nbsp; There is no need to have separate base names for separate JSP
+pages, the entire site could have a single set of translation files.&nbsp;
+Or more, as convenient.
+<p>A "language suffix" is added to "base name" to obtain the actual translation
+file name.&nbsp; For instance, if the translation file is "translationFile",
+and if the current user's language is german, then the filename which will
+be used will be "translationFile_de", because the language code for german
+is "de".&nbsp; The language codes can be further narrowed by specifying
+a country code and a variant, as per Java Locale conventions.&nbsp; The
+narrowest filename which is available, will be used.&nbsp; Therefore if
+the user's language code is "en_uk" and a "translationFile_en_uk" is available,
+that file will be used.&nbsp; Otherwise, if a "translationFile_en" is available,
+that will be used.&nbsp; (Note:&nbsp; The translation tool has language
+codes for a wide number of languages, built it.)
+<p>If no translation file is available, the original text will be used.
+<p>In addtion the language suffix to the base name, extensions are preserved.&nbsp;
+If any file extension (starting with the dot charcter) is present, the
+language suffix will be added before the dot.&nbsp; So if the base file
+is "translate.txt" and the language code is "fr", the resulting filename
+will be "translate_fr.txt".
+<p>The &lt;blx:xlt> tag is used to tag the English (or other natural language)
+text which is to be translated.
+<p>An example is:
+<blockquote>
+<pre>&lt;blx:xltFile file="translate.txt">
+&lt;P>&lt;blx:xlt ref="intro">
+Introduction to
+this site..
+&lt;/blx:xlt>&lt;br>
+&lt;blx:xlt ref="getname">Enter your name here&lt;/blx:xlt>
+&lt;FORM METHOD=POST ACTION=savename.jsp>
+&lt;INPUT NAME=name TYPE=TEXT>
+&lt;INPUT TYPE=SUBMIT VALUE=&lt;blx:xlt ref="submit">Submit&lt;/blx:xlt>>
+&lt;/FORM>
+&lt;/blx:xltFile></pre>
+</blockquote>
+The translation file format is
+<blockquote>
+<pre>tag=value</pre>
+</blockquote>
+with one translation per line.&nbsp; Lines starting with the dash ("-")
+character are considered continuation of the previous line (the dash will
+be replaced by line separator characters.)
+<p>For instance, the translation file for french for the above example
+would be named translate_fr.txt and it might contain the following text
+<blockquote>
+<pre>intro=Introduction &agrave;
+-ce site
+getname=&eacute;crivez votre nom ici
+submit=Soumettent</pre>
+</blockquote>
+Use the Blazix Tag Extractor tool to collect all translation tags from
+your JSP files and give them to translators for individual languge translation.
+<p>Individual XLT tags are described below.
+<h3>
+blx:xltFile</h3>
+This tag can be used to build internationalizable JSPs.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;
+<br>The name provided by the "file" attribute is&nbsp; the "base" name
+of the translation file.&nbsp; A locale specific extension is then added
+to pull in&nbsp;&nbsp; the appropriate language translation file.&nbsp;
+For instance if the base name is "myfile" and the language is "fr", the
+translation file will be "myfile_fr".&nbsp; If the file has an extension,
+the language id is added before the extension.&nbsp; E.g.&nbsp; for "myfile.txt"
+and language id "fr", the tag library will look to see if "myfile_fr.txt"
+exists.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;
+<br>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>file</td>
+
+<td>Base name of translation file</td>
+
+<td>yes</td>
+</tr>
+</table>
+
+<h3>
+blx:xlt</h3>
+The text which should be translated is placed inside this tag.&nbsp; The
+tag itself has a a reference id "ref".&nbsp; This reference id is then
+used by translators to provide other language translations.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;
+<br>At runtime, the translation for the visitor's language is pulled from
+the translation files using the "id" attribute.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;
+<br>All occurences of this tag must be inside an "xlatFile" tag.
+<br>&nbsp;&nbsp;&nbsp;&nbsp;
+<br>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>ref</td>
+
+<td>Tag reference name</td>
+
+<td>yes</td>
+</tr>
+</table>
+
+<pre></pre>
+</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

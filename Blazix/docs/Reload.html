@@ -1,0 +1,68 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Reloading classes in Blazix</h2>
+EJB Jar files and Web archive (WAR) files can be uploaded dynamically in
+Blazix, via the server administration interface.&nbsp; This is mostly for
+production environments and clusters.
+<p>For development, Blazix also provides a fast method to reload all classes
+in a given Web application.&nbsp; This can be done by specifying the&nbsp;
+<blockquote><tt>application.&lt;name>.reloadUrl</tt></blockquote>
+configuration parameter in the Web configuration file.
+<p>The sample Web configuration file supplied with Blazix already sets
+up the URL "<tt>/_reload"</tt> to be the reload URL for the "default" application.&nbsp;
+(This should be taken out in production environments.)
+<p>Visiting this URL (<tt>http://localhost/_reload</tt>) will drop all
+existing user classes from the default application, and the next time they
+are referenced, they will be reloaded.&nbsp; Therefore it can be used during
+development to reload classes.&nbsp; (Note:&nbsp; Any EJB Jar files in
+the classpath that have been already loaded due to an EJB connection, cannot
+be reloaded using this method.&nbsp; EJB Jar fils are loaded directly via
+the system loader.)
+<p>There is a small complication involved with this for JSP pages (and
+servlets that use sessions.)&nbsp; Because all JSP pages use sessions by
+default (unless the "<tt>session</tt>" parameter is set to false,) the
+class reload will not appear to work.&nbsp; This is because as long as
+a client request comes in with an old session object, Bazix must give it
+the old set of classes to avoid changing classes in the middle of a client
+session (to avoid generating errors from the mix-and-match of old and new
+classes, the classes for any particular sessions are kept consistent.)
+<p>A simple workaround for this is to exit the browser (close all browser
+windows) and restart it.&nbsp; This will flush the session cookie, and
+the next time you visit the JSP page in the browser, you will no longer
+have a reference to an old session object.&nbsp; Therefore you will get
+the new set of classes.
+<p><b>Specifying classes for direct loading:</b>&nbsp; Some classes are
+not designed for loading via a classloader, but should be loaded directly
+by the system loader.&nbsp; These classes can be specified using the "<tt>useSystemLoader</tt>"
+configuration parameter.&nbsp; These will not be reloadable, and will be
+loaded directly using the system class loader.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Internationalizing web-sites using Blazix</h2>
+Blazix supports internationalization of static and dynamic web pages.
+<h4>
+Static Pages</h4>
+For static web pages such as HTML, GIF, JPEG pages whose content is delivered
+from a file, multiple language versions of the file can be created.
+<p>The language specific version of a file is created by adding two underscores
+and the language code <b>before </b>the extension in the filename.
+<p>For instance, if the file is index.html and if the language is french,
+the language specific file will be named index__fr.html.
+<p>Two underscores are used to avoid accidental name collision.
+<p>This mechanism is also available for use with other static files such
+as GIF files or JPEG files.
+<h4>
+JSP pages</h4>
+Internationalization in JSPs is supported via a JSP 1.1 tag library.&nbsp;
+See details in <a href="JspAdvanced.html">Blazix JSP for Advanced Users</a>.
+<p>Note that the Java code in JSPs still should be written to be internationalization
+aware.&nbsp; For instance, to format a date, instead of using the default
+<i>DateFormat</i> instance, a locale specific <i>DateFormat</i> instance
+should be obtained, using the <i>request.getLocale()</i> method to obtain
+the visitor's locale.
+<h4>
+Other dynamic content</h4>
+Servlets must handle internationalization in the servlet code, using the
+<i>getLocale()</i> method to obtain the visitor's locale.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

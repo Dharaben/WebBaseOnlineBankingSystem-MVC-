@@ -1,0 +1,213 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Setting up Blazix servers as an NT or Windows/2000 service</h2>
+Blazix includes a "Server Manager" program that can provide automatic startup
+and remote management for Blazix Web servers, EJB servers, JMS servers
+and cluster servers.&nbsp; The Server Manager itself can be set up as a
+Windows NT (or a Windows 2000) service for automatic start-up. (This requires
+the appropriate priviliges, the user should log in as administrator or
+should have administrator privileges enabled before attempting to install
+a ervice.)
+<p>The Blazix installation includes a file <tt>BlazixWinService.exe</tt>.
+<p>This file is used to start the server manager as a service.
+<p>You must create an initialization file for the service.&nbsp; The path
+name of the initialization file is the same as the .exe file's path name,
+but with the "<tt>.exe</tt>" replaced by "<tt>.ini</tt>".&nbsp; For instance,
+if the executable file is <tt>C:\BlazixServer\BlazixWinService.exe</tt>,
+the corresponding initialization file will be <tt>C:\BlazixServer\BlazixWinservice.ini</tt>.
+<p>The initialization file contains the following parameters:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td>javaPath</td>
+
+<td>Path to be setup before starting the Java executable.</td>
+</tr>
+
+<tr>
+<td>javaExe</td>
+
+<td>The command to start the Java executable.&nbsp; It defaults to "java",
+so the default can be used if the path is setup correctly.</td>
+</tr>
+
+<tr>
+<td>homeDir</td>
+
+<td>The directory where the servers should be started.</td>
+</tr>
+
+<tr>
+<td>classPath</td>
+
+<td><b>Complete</b> classpath for the servers (including blazix.jar and
+the "classes" folder if required.)&nbsp; Can be over-ridden for individual
+servers.</td>
+</tr>
+
+<tr>
+<td>server.port</td>
+
+<td>The port number where the Server Manager should listen for the Server
+Administration tool.&nbsp; When running inside firewalls, this port should
+NOT be open for external access.</td>
+</tr>
+
+<tr>
+<td>server.address</td>
+
+<td>This can be specified on machines with multiple IP addresses.</td>
+</tr>
+
+<tr>
+<td>server.password</td>
+
+<td>A password for the Server Manager.</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>webServer.name</td>
+
+<td>The name of a Web server (for internal use within this configuration
+file only.)</td>
+</tr>
+
+<tr>
+<td>webServer.&lt;name>.config</td>
+
+<td>Full path to the Web server configuration file.</td>
+</tr>
+
+<tr>
+<td>webServer.&lt;name>.classpath</td>
+
+<td>Classpath for the web server.&nbsp; If both this parameter and the
+configuration wide "classPath" are provided, this value will take precedence
+for this web server.</td>
+</tr>
+
+<tr>
+<td>webServer.&lt;name>.clusterFile</td>
+
+<td>Full path to the cluster configuration file.&nbsp; Required if the
+web server is participating in a cluster.</td>
+</tr>
+
+<tr>
+<td>ejbServer.name</td>
+
+<td>Name of an EJB server.</td>
+</tr>
+
+<tr>
+<td>ejbServer.&lt;name>.config</td>
+
+<td>Full path to the EJB server configuration file.</td>
+</tr>
+
+<tr>
+<td>ejbServer.&lt;name>.classpath</td>
+
+<td>Classpath for the EJB server.</td>
+</tr>
+
+<tr>
+<td>ejbServer.&lt;name>.clusterFile</td>
+
+<td>Full path to the cluster configuration file.</td>
+</tr>
+
+<tr>
+<td>jmsServer.name</td>
+
+<td>Name of a JMS server.</td>
+</tr>
+
+<tr>
+<td>jmsServer.&lt;name>.config</td>
+
+<td>Full path to the JMS server configuration file.</td>
+</tr>
+
+<tr>
+<td>clusterServer.name</td>
+
+<td>Name of a cluster-backup server (for Web-server clusters.)</td>
+</tr>
+
+<tr>
+<td>clusterServer.&lt;name>.config</td>
+
+<td>Full path to the cluster server's cluster configuration file.</td>
+</tr>
+</table>
+
+<p>A sample file for starting up a Web server, an EJB server and a JMS
+server is shown below:
+<blockquote><tt># Set up paths and home directory</tt>
+<br><tt>javapath: c:\jdk1.3\bin</tt>
+<br><tt>classpath: c:\Blazix\blazix.jar;C:\Blazix\classes;c:\MyClasses</tt>
+<br><tt>homeDir: c:\Blazix</tt><tt></tt>
+<p><tt># allocate a port and a password for the ServerManager itself.</tt>
+<br><tt>server.port: 4400</tt>
+<br><tt>server.password: myServerPassword</tt><tt></tt>
+<p><tt># specify the servers to be managed</tt>
+<br><tt>webServer.name: web1</tt>
+<br><tt>webServer.web1.config: c:\Blazix\web.ini</tt><tt></tt>
+<p><tt>ejbServer.name: ejb1</tt>
+<br><tt>ejbServer.ejb1.config: c:\Blazix\ejb.ini</tt><tt></tt>
+<p><tt>jmsServer.name: jms1</tt>
+<br><tt>jmsServer.jms1.config: c:\Blazix\jms.ini</tt></blockquote>
+After setting up the initialization file, the executable should be run
+from a command prompt window with the argument "<tt>/interactive</tt>"
+to confirm that the initialization file is correctly set up.&nbsp; (If
+you forget the <tt>/interactive</tt>, you may have trouble shutting down
+the server.)&nbsp; If the servers start up successfully, close it down
+by typing Control/C and try the argument "<tt>/interactiveShutdown</tt>"
+-- this will start the server manager and attempt to stop it after two
+mintutes to confirm that the service is able to shut down correctly.
+<p>Once the initialization file has been set up correctly, the service
+can be installed by running the executable with the "<tt>/install</tt>"
+argument.&nbsp; An installed service can be uninstalled by running the
+executable with the "<tt>/uninstall</tt>" argument.
+<p>On Windows/2000, the included file <tt>BlazixServiceConsoleHandler.dll</tt>
+must be present in the same directory where the <tt>BlazixWinService.exe</tt>
+file resides.&nbsp; This DLL prevents the Windows/2000 logoff message from
+shutting down the Java VM.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

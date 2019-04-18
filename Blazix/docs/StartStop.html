@@ -1,0 +1,60 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Starting and Stopping the Servers</h2>
+
+<h3>
+Starting the servers</h3>
+There are many different ways to start the servers.
+<ul>
+<li>
+The Windows installer adds commands to the "Start" menu to start the web
+server and the EJB server.&nbsp;</li>
+
+<li>
+The <a href="Tools.html">blazix commands</a> or their Java class names
+can be used to start the web server, the EJB server or the clustering server.</li>
+
+<li>
+For production and clustered environments, Blazix servers should be started
+using the server manager.</li>
+</ul>
+
+<h3>
+Stopping the Servers</h3>
+Like in any standard Java programs, typing a control-C in the Java console
+window will stop the servers.&nbsp; A disadvantage of this approach is
+that log files will not get flushed, and connections will not be gracefully
+closed.&nbsp; It should not be used in production environments.
+<p>The server manager should be used in production environments.&nbsp;
+If the server manager is in use, servers can be stopped and restarted either
+locally or on remote machines, using the Blazix server administration interface.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

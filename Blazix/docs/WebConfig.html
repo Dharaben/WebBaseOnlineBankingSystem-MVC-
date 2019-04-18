@@ -1,0 +1,718 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Web-Server Configuration</h2>
+
+<blockquote>
+<li>
+<font size=-1><a href="#location">Location</a></font></li>
+
+<li>
+<font size=-1><a href="#concepts">Concepts</a></font></li>
+
+<li>
+<font size=-1><a href="#webxml">The web.xml file</a></font></li>
+
+<li>
+<font size=-1><a href="#war">Web Application Archive (.war) Files</a></font></li>
+
+<li>
+<font size=-1><a href="#taglib">Tag libraries</a></font></li>
+
+<li>
+<font size=-1><a href="#config">Configuration Parameters</a></font></li>
+
+<li>
+<font size=-1><a href="Servlets.html">Servlets</a></font></li>
+</blockquote>
+
+<h3>
+<a NAME="location"></a>Location</h3>
+The configuration file may be specified using the -c switch in the command
+line, e.g.
+<blockquote>
+<pre>blxweb -c c:\Mylocation\myweb.ini
+or
+java desisoft.server.ServerMain -c c:\Mylocation\myweb.ini</pre>
+</blockquote>
+If the file is not specified on the command line, the web-server searches
+for a configuration file in the following order:
+<ul>
+<li>
+if the Java property "desisoft.web.config" is set, it uses that as the
+configuration file name.</li>
+
+<li>
+it looks in the hardwired locations c:\BlazixWebServer.ini (for Windows)
+and /usr/blazix/WebServer.ini (for Unix).</li>
+
+<li>
+it looks for a web.ini file in the current directory.</li>
+</ul>
+(The installation process starts off with the last option above.)
+<h3>
+<a NAME="concepts"></a>Concepts</h3>
+<b>Applications:</b>&nbsp; The files on a web server are grouped into one
+or more "applications".&nbsp; By default, everything is placed in an application
+called "default".&nbsp; Files can be placed in other applications by specifying
+an application name using "application.name" and by specifying application
+properties.&nbsp; An application corresponds to the javax.servlet.ServletContext
+interface.&nbsp; Servlet-2.2 compliant archive files can be loaded using
+the "application.&lt;appname>.jarFile" parameter.
+<p>To provide application specific parameters for the default application,
+use "application.default.&lt;property-name>".
+<p><b>Data Sources:</b> One or more JDBC "data sources" can be made available
+to the servlets and JSPs running in the web-server.&nbsp; Once configured,
+the data source names can be used in the Blazix tag library for "connection"
+name.&nbsp; The data sources can also be directly accessed at the JNDI
+location java:comp/env/jdbc/&lt;data-source-name> and will return an object
+of type javax.sql.DataSource which can be used to obtain pooled connections.
+<p>Data sources are configured by specifying a driverClass and a database
+url, or by providing an implementation of <a href="JdbcResourceFactory.html">desisoft.deploy.JdbcResourceFactory,</a>
+or by providing an ODBC name.
+<p>See <a href="DataSources.html">JDBC data sources</a> for more information.
+<p><b>Roles:</b> These are used in name/password verification.&nbsp; Each
+resource (servlet, html page, jsp page etc) can be protected by making
+it available only to certain "role"s.&nbsp; Each role can contain one or
+more usernames.&nbsp; A username may be included in multiple roles.&nbsp;
+See <a href="Authorization.html">authentication</a> for details.
+<p><b>ION:</b>&nbsp; This is a technology provided by Blazix that allows
+clients to lookup a Java interface at a server, and to use that interface
+directly for performing computations over the network.&nbsp; See <a href="Ion.html">ION</a>
+for details.
+<p><b>Virtual Hosts:</b>&nbsp; Starting with HTTP/1.1, multiple hosts can
+share the same IP address.&nbsp; Blazix allows utilization of this feature.&nbsp;
+An application may be mapped to one or more domain names.
+<h3>
+<a NAME="webxml"></a>The web.xml file</h3>
+The standard Java Application server <tt>web.xml</tt> file works in Blazix
+just the same as any other web-servers, except that it does not have to
+be (but can be) packaged into an archive.&nbsp; A simple way to use the
+<tt>web.xml</tt>
+file until it is ready to be packaged, is simply to create a folder called
+"<tt>Web-inf</tt>" in the webfiles folder, and to place the <tt>web.xml</tt>
+file in this folder.&nbsp; The "Web-inf" folder is secure for placing local
+resources, because it cannot be accessed as a normal URL.
+<p>The <tt>web.xml</tt> file is not required in Blazix, and in typical
+application development it might be easier to use just the <tt>.ini</tt>
+file during early development.&nbsp; Later on, a <tt>web.xml</tt> can be
+automatically generated via the Blazix Web Archive Packer tool.
+<h3>
+<a NAME="war"></a>Web Application Archive files</h3>
+Standard Java Application server archive files (.war) files work in Blazix
+the same as in any other web-server.&nbsp; To specify such archive files,
+add a configuration parameter "application.&lt;name>.jarFile" and make
+it point to the .war file's path.&nbsp; The .war file should include a
+WEF-INF/web.xml entry, which will be processed at initialization.
+<p>Blazix also includes a utility to create web server archive files from
+a directory structure.&nbsp; (See the tools section of the documentation.)
+<h3>
+<a NAME="taglib"></a>Tag libraries</h3>
+Tag library descriptors can be treated as normal URLs (placed in the "webfiles"
+hierarchy,) or can be placed in the WEB-INF folder.
+<h3>
+<a NAME="config"></a>Configuration Parameters</h3>
+The following configuration file parameters are available:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td>server.port</td>
+
+<td>Server port number, e.g. "80".&nbsp; It must be an integer.</td>
+</tr>
+
+<tr>
+<td>server.address</td>
+
+<td>Server address (primarily for use on machines with multiple IP address.)&nbsp;
+This must be a valid hostname or an IP addresses.</td>
+</tr>
+
+<tr>
+<td>admin.port</td>
+
+<td>Port for administration server access.&nbsp; If admin.port or admin.password
+are not specified, server will not be remotely administerable.&nbsp; If
+running inside a firewall, the admin port should be selected so that it
+is NOT accessible through the firewall.</td>
+</tr>
+
+<tr>
+<td>admin.password</td>
+
+<td>Password for administration server access.</td>
+</tr>
+
+<tr>
+<td>connection.timeout</td>
+
+<td>Timeout in seconds before persistent connections will be disconnected
+if unused.&nbsp; (Persistent connections are available in HTTP/1.1 and
+in some cases in HTTP/1.0, and improve server performance by reducing the
+connection setup overhead.)</td>
+</tr>
+
+<tr>
+<td>session.timeout</td>
+
+<td>Timeout in seconds before session data will be discarded if unused.</td>
+</tr>
+
+<tr>
+<td>maxUsers</td>
+
+<td>Maximum number of simultaneous users expected at any given <i>instant</i>.&nbsp;
+Defaults to 512 on Windows systems, and 256 on non-Windows systems.&nbsp;
+These values represent the <i>lower end</i> of the hardware commonly expected
+with these systems.&nbsp; The actual upper limit is machine dependent,
+and may be discovered by experimentation.
+<p>If ION is in use, then the limit may need to be increased because ION
+connections can be of long durations.</td>
+</tr>
+
+<tr>
+<td>printAllAccess</td>
+
+<td>Controls whether or not the web server prints a line for each URL access.&nbsp;
+The default is "<tt>true</tt>".&nbsp; Note that more detailed access logs
+can be created by using the access.logDir parameter.</td>
+</tr>
+
+<tr>
+<td>tempDir</td>
+
+<td>Temporay directory</td>
+</tr>
+
+<tr>
+<td>access.logDir</td>
+
+<td>This should refer to a directory.&nbsp; If provided, this directory
+will be used for generating daily access logs.</td>
+</tr>
+
+<tr>
+<td>server.classDir</td>
+
+<td>This should refer to a directory.&nbsp; This directory and any .jar
+files it contains will be added to the servlet and JSP classpaths.&nbsp;
+Jar files can be added remotely to this directory by using the server administration
+tool.</td>
+</tr>
+
+<tr>
+<td>warDir</td>
+
+<td>This should refer to a directory.&nbsp; Any .war files (Web archive
+fils) in this directory will be automatically deployed.&nbsp; The context
+URL for these .war files is provided by their filenames.&nbsp; The name
+default.war is reserved for the default context, with the URL "/".
+<br>War files can be added or updated to this directory remotely, by using
+the server administration tool.</td>
+</tr>
+
+<tr>
+<td>ionDir</td>
+
+<td>A directory for use by ION to maintain its registry.</td>
+</tr>
+
+<tr>
+<td>ionLogExceptions</td>
+
+<td>Set this to true or false, to control whether exceptions occurring
+in any ION server classes will be logged to the output.</td>
+</tr>
+
+<tr>
+<td>mimeType.*</td>
+
+<td>Mime Types to be added to the server, e.g.
+<pre>mimeType.foo: application/foo-files</pre>
+</td>
+</tr>
+
+<tr>
+<td>ejb.nameServer1
+<br>ejb.nameServer2
+<br>...
+<br>ejb.nameServer9</td>
+
+<td>EJB name servers.&nbsp; If more than one are being provided, they will
+be used as backup, so if ejb.nameServer1 is not available, ejb.nameServer2
+will be tried and so on.</td>
+</tr>
+
+<tr>
+<td>jms.nameServer1
+<br>jms.nameServer2
+<br>...
+<br>jms.nameServer9</td>
+
+<td>JMS servers.&nbsp; If more than one are being provided, they will be
+used for backup.&nbsp; Only one functioning server is required for access
+to the entire JMS cluster.</td>
+</tr>
+
+<tr>
+<td>ejb.protocol</td>
+
+<td>This should be set to <tt>JRMP</tt> or <tt>IIOP</tt>.&nbsp; It must
+match the ejb.protocol setting of the EJB server configuration files.&nbsp;
+Defaults to <tt>JRMP</tt>.</td>
+</tr>
+
+<tr>
+<td>license.file</td>
+
+<td>Path of license file</td>
+</tr>
+
+<tr>
+<td>access.logDir</td>
+
+<td>Directory where access log files will be kept.&nbsp; If this parameter
+is not provided, no access logs will be kept.&nbsp; If the parameter is
+provided, daily access logs will be created.</td>
+</tr>
+
+<tr>
+<td>backup.readonly</td>
+
+<td>Indicates that a given cluster server should be used in a "read only"
+mode.&nbsp; For use when the cluster server resides on the same machine
+as the web server.&nbsp; This protects against the situation when the machine
+crashes and both the web-server and the cluster-server are lost together.&nbsp;
+Specifying "read-only" tells the web-server that it is not to save anything
+to this particular cluster server, but only use it for failure recovery
+situations.</td>
+</tr>
+
+<tr>
+<td>jsp.keepGenerated</td>
+
+<td>Keep the generated Java files for .jsp files.</td>
+</tr>
+
+<tr>
+<td>ssl.port</td>
+
+<td>SSL port.&nbsp; See <a href="Ssl.html">setting up a SSL server</a>
+for details.</td>
+</tr>
+
+<tr>
+<td>ssl.share</td>
+
+<td>Share of resources to be assigned to SSL.</td>
+</tr>
+
+<tr>
+<td>ssl.keystore</td>
+
+<td>Path to SSL keystore file</td>
+</tr>
+
+<tr>
+<td>ssl.keystorePassword</td>
+
+<td>Password to keystore</td>
+</tr>
+
+<tr>
+<td>ssl.showPasswordDialog</td>
+
+<td>If keystore password is not specified, this value can be set to true
+to indicate a password-reading dialog should be displayed during server
+startup.&nbsp; Otherwise password will be read from command line, with
+echo.</td>
+</tr>
+
+<tr>
+<td>startup.asynchronous</td>
+
+<td>Name of a class that implements "Runnable".&nbsp; This class will be
+instantiated and started in a separate thread during server startup.</td>
+</tr>
+
+<tr>
+<td>startup.synchronous</td>
+
+<td>Name of a class that implemens "Runnable".&nbsp; This class will be
+intantiated and its "run" method will be called during server startup.&nbsp;
+Server startup wil not proceed until the "run" method returns.</td>
+</tr>
+
+<tr>
+<td>useSystemLoader</td>
+
+<td>This can be used to specify JAR files or directories in the CLASSPATH
+that should be loaded directly by the system loader.&nbsp; The classes
+will not be reloadable, as they will not be loaded via a Blazix classloader.
+<p>This feature can be useful for classes that present problems when loading
+with a classloader.&nbsp; The value of this parameter must be exactly one
+JAR/zip file or one directory in the classpath -- the parameter can be
+repeated multiple times.&nbsp; Each value must match exactly the path as
+specified in classpath.</td>
+</tr>
+
+<tr>
+<td>application.name</td>
+
+<td>Name of an application.&nbsp; The name "default" is pre-defined.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.authType</td>
+
+<td>"Basic" or "Form".&nbsp; Used with password protected resources.&nbsp;
+If the authType is set to "Basic", the browser will present the standard
+username/password dialog.&nbsp; If authType is "Form", the browser will
+be redirected to a login page.&nbsp; If login is valid, the browser will
+then be further redirected to the original resource.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.authLoginForm&nbsp;</td>
+
+<td>Name of an HTML form page for use with "Form" authType.&nbsp; The form
+must contain fields "j_username" and "j_password", and its action must
+be set to "j_security_check".</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.authErrorPage</td>
+
+<td>Name of an HTML page for use with "Form" authType.&nbsp; This page
+is displayed if user authorization is incorrect.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.authRealm</td>
+
+<td>For use with the "Basic" authType.&nbsp; The authRealm will be sent
+to the browser, and will be displayed in the title of the borwser's name/password
+dialog box.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.authClass</td>
+
+<td>If provided, it must the name of a class that implements <a href="AuthCheck.html">desisoft.deploy.AuthCheck</a>&nbsp;
+The class will be instantiated, and all username/password values for the
+application will be given to the instantiated object&nbsp; for authentication.&nbsp;
+Blazix provides a default file-based implementation of this class, see
+<a href="Authorization.html">Authorization.</a></td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.authParam.*</td>
+
+<td>Initialization parameters to be passed to the object instantiated for
+application.&lt;name>.authClass.&nbsp; The default file-based authorization
+requires one initialization parameter, application.&lt;name>.authParam.file,
+which should be set to the path of the file containing usernames and passwords.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.url</td>
+
+<td>The URL at which this application context will be mapped.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.jarFile</td>
+
+<td>An archive (.war or .jar) file that contains a pre-packaged servlet-2.2
+compliant application.&nbsp; Other parameters will be read from the archive
+file's WEB-INFO/web.xml file, if present.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.dir</td>
+
+<td>Location where applications's data files reside (HTML, GIF files etc.)</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.jspDir</td>
+
+<td>A directory to use for compiling and keeping JSP classes.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.param.*</td>
+
+<td>Context initialization parameters, which will be available via the
+ServletContext interface.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.virtualHost</td>
+
+<td>If the application provides pages for a virtual host, the virtual host
+should be named here.&nbsp; Note that this is not the domain name of the
+virtual host.&nbsp; This refers to a "virtualHost.name" entry in the configuration
+file.&nbsp; The domain names of the virtual host should be specified via
+"virtualHost.&lt;virtualHostName>.addr" entries.</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.reloadUrl</td>
+
+<td>A URL that is used to unload all the classes from application context
+(so if the classes have changed, the new versions will get loaded.)&nbsp;
+This is provided for convenience during development.&nbsp; It should be
+removed in production environments.
+<p>If the application is "default", the ION classes will also get unloaded
+(and reloaded).</td>
+</tr>
+
+<tr>
+<td>application.&lt;name>.filter</td>
+
+<td>Add a filter to the application.&nbsp; The filter is specified as "<tt>name=class</tt>",
+e.g.
+<center><tt>application.default.filter:&nbsp; myfilter=mypackage.MyFilterClass</tt></center>
+</td>
+</tr>
+
+<tr>
+<td>role.name</td>
+
+<td>Name of a role</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>role.&lt;name>.url</td>
+
+<td>URL of a resource which is accessible to this role.</td>
+</tr>
+
+<tr>
+<td>role.&lt;name>.application</td>
+
+<td>If the role is not for the "default" application, the application name
+can be specified here.</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>servlet.name</td>
+
+<td>Name of a servlet</td>
+</tr>
+
+<tr>
+<td>servlet.&lt;name>.className</td>
+
+<td>Name of the servlet implementation class</td>
+</tr>
+
+<tr>
+<td>servlet.&lt;name>.url</td>
+
+<td>URL of the servlet</td>
+</tr>
+
+<tr>
+<td>servlet.&lt;name>.param.*</td>
+
+<td>Servlet initialization parameters, which will be available via the
+Servlet interface.</td>
+</tr>
+
+<tr>
+<td>servlet.&lt;name>.application</td>
+
+<td>If the servlet is a part of an application other than "default", the
+application name can be specified here.&nbsp; Note that pre-packaged application
+archives already include servlet configuration information in the WEB-INFO\web.xml
+file.</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>dataSource.name</td>
+
+<td>Name of a dataSource</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.jndiName</td>
+
+<td>JNDI name for dataSource, if not the same as the dataSource name.</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.driverClass</td>
+
+<td>JDBC driver's class name</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.providerClass</td>
+
+<td>Class providing implementation of <a href="JdbcResourceFactory.html">desisoft.deploy.JdbcResourceFactory</a></td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.param.*</td>
+
+<td>Any initialization parameters to be passed to the implementation of
+<a href="JdbcResourceFactory.html">desisoft.deploy.JdbcResourceFactory</a></td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.odbc</td>
+
+<td>ODBC name for data source.</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.username</td>
+
+<td>Username for using in obtaining connections</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.password</td>
+
+<td>Password for using in obtaining connections</td>
+</tr>
+
+<tr>
+<td>ion.name</td>
+
+<td>Name of an ION entry.&nbsp; This provides an interface which can be
+looked up by remote clients.</td>
+</tr>
+
+<tr>
+<td>ion.&lt;name>.url</td>
+
+<td>A URL where the ION interface can be looked up.&nbsp; This is not related
+to Web URLs, it is just a string the clients know about.
+<p>It is optional.&nbsp; The clients can lookup an ION interface either
+by URL or by interface name.</td>
+</tr>
+
+<tr>
+<td>ion.&lt;name>.interface</td>
+
+<td>Fully qualified name of the interface being provided to remote clients.&nbsp;
+All interfaces used in ION must be registered using the blxionreg tool.</td>
+</tr>
+
+<tr>
+<td>ion.&lt;name>.className</td>
+
+<td>Fully qualified name of a class that implements the interface being
+provided to remote clients.</td>
+</tr>
+
+<tr>
+<td>ion.&lt;name>.callback</td>
+
+<td>If provided, this should be the fully qualified name of an interface
+previously registered using blxionreg.&nbsp; The client can supply this
+interface when making calls over ION, and the server can make callbacks
+using this callback interface.</td>
+</tr>
+
+<tr>
+<td>ion.&lt;name>.callbackNullable</td>
+
+<td>If a callback interface has been provided, this parameter specifies
+whether the client can supply a null instead of an object implementing
+the callback interface.&nbsp; If the callback is nullable, it is the server
+object's responsibility to check if the callback object is null, before
+making any callbacks.</td>
+</tr>
+
+<tr>
+<td>ion.&lt;name>.authClass</td>
+
+<td>Standard Blazix authorization mechanism.</td>
+</tr>
+
+<tr>
+<td>ion.&lt;name>.authParam.*</td>
+
+<td>Standard Blazix authorization mechanism.</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>virtualHost.name</td>
+
+<td>Name of a virtual host configuration entry.</td>
+</tr>
+
+<tr>
+<td>virtualHost.&lt;name>.addr</td>
+
+<td>Domain name of the virtual host.&nbsp; The entry can be repeated for
+multiple domain names.&nbsp; In typical usage, two domain names will need
+to be specified, e.g. "www.mydomain.com" and "mydomain.com".</td>
+</tr>
+
+<tr>
+<td>virtualHost.&lt;name>.accessLogDir</td>
+
+<td>Access log directory for the virtual host.&nbsp; If provided, daily
+access logs will be maintained for the virtual host.</td>
+</tr>
+</table>
+
+<p>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

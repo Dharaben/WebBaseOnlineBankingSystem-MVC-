@@ -1,0 +1,272 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Desiderata Software">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+The Blazix tag library:&nbsp; SQL tags</h2>
+The SQL tags make it easy to write SQL statements directly in the JSP page,
+and to conveniently execute them.&nbsp; The tags for executing SQL are
+&lt;blx:sqlExecuteQuery> and &lt;blx:sqlExecuteUpdate>.&nbsp; &lt;blx:sqlExecuteUpdate>
+is used when the query does not return any values.&nbsp; For queries that
+return values, &lt;blx:sqlExecuteQuery> provides a way to loop over the
+values.&nbsp; For example,
+<blockquote>
+<pre>&lt;TABLE>
+&lt;TR>&lt;TD>Item&lt;/TD>&lt;TD>Price&lt;/TD>&lt;/TR>
+&lt;blx:sqlExecuteQuery resultSet="rs" queryRef="myQuery">
+&lt;TR>
+&lt;TD>&lt;%= rs.getString("Item") %>&lt;/TD>
+&lt;TD>&lt;%= rs.getFloat("Price") %>&lt;/TD>
+&lt;/TR>
+&lt;/blx:sqlExecuteQuery>
+&lt;/TABLE></pre>
+</blockquote>
+Note that the tag is defining a variable "rs" which is available within
+the body of the tag.&nbsp; The body of the tag will be repeated as long
+as "rs" returns more elements.
+<p>&nbsp;The query to execute, is being specified by the id "myQuery".&nbsp;
+This id should have been defined earlier, e.g.
+<blockquote>
+<pre>&lt;blx:sqlQuery&nbsp; id="myQuery">
+SELECT Item, Price FROM PriceTable
+&lt;/blx:sqlQuery></pre>
+</blockquote>
+The query may include JSP expressions, e.g.
+<blockquote>
+<pre>&lt;blx:sqlQuery&nbsp; id="myQuery">
+SELECT Item, Price FROM &lt;%= tableName %>
+&lt;/blx:sqlQuery></pre>
+</blockquote>
+The database connection also needs to be specified.&nbsp; Therefore, &lt;blx:sqlExecuteQuery>
+should be inside a &lt;blx:sqlConnection> tag.&nbsp; Alternatively, the
+connection can be directly named in the query tag.
+<p>The connection name should be configured in the web-server configuration
+file.&nbsp; See <a href="DataSources.html">configuring data sources</a>.
+<p>The &lt;blx:sqlGet> query can be used to retrieve a single value.&nbsp;
+For instance,
+<pre>&lt;P>Nubmer of Total Items =
+&lt;blx:sqlGet query="SELECT COUNT(*) FROM Items"/></pre>
+Individual tags are described below.
+<h3>
+blx:sqlConnection</h3>
+JDBC connections are identified by the JNDI names.&nbsp; This tag allows
+a convenient way to provide a JNDI&nbsp; name for several SQL tags without
+specifying it in each one, by placing all of them inside this tag.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>jndiName</td>
+
+<td>JNDI name of connection</td>
+
+<td>yes</td>
+</tr>
+</table>
+
+<h3>
+blx:sqlQuery</h3>
+This tag can be used to write a SQL query (which can have embedded JSP
+expressions.)&nbsp; The query is associated with an id, which can then
+be referenced by other SQL tags.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>id</td>
+
+<td>Query ID for reference by other tags</td>
+
+<td>yes</td>
+</tr>
+</table>
+
+<h3>
+blx:sqlExecuteQuery</h3>
+A query iteration tag.
+<p>There is one required attribute: resultSet. The body of the tag will
+be evaluated once for each row of the query results.&nbsp; "resultSet"
+specifies the name of a variable.&nbsp; This variable will be declared
+within the scope of the query body.&nbsp; Each time through the loop, this
+variable will be set to the next item in the resultset.
+<p>The query must be specified using one of these methods:&nbsp; directly
+specifying the query by using the "query" attribute or by referencing&nbsp;
+the id of an "sqlQuery" tag using the "queryRef" attribute.
+<p>If the tag is not enclosed in a sqlConnection tag, the JNDI name of
+the connection must be specified by using the "connection" tag.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>resultSet</td>
+
+<td>Name of variable which will be created by the tag.&nbsp; This variable
+will be available within the body of the tag, and will reference a java.sql.ResultSet
+object.</td>
+
+<td>yes</td>
+</tr>
+
+<tr>
+<td>query</td>
+
+<td>The query string.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>queryRef</td>
+
+<td>Reference to the id of a &lt;blx:sqlQuery> tag.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>connection</td>
+
+<td>JNDI name of the connection</td>
+
+<td>no</td>
+</tr>
+</table>
+
+<h3>
+blx:sqlGet</h3>
+This tag can be used to execute a query that returns a single result.&nbsp;
+The result is placed in the JSP output.&nbsp; The query can be specified
+in the tag itself using the "query" attribute, or by reference to a sqlQuery
+tag using the "queryRef" attribute.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>query</td>
+
+<td>The query string.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>queryRef</td>
+
+<td>Reference to the id of a &lt;blx:sqlQuery> tag.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>connection</td>
+
+<td>JNDI name of the connection</td>
+
+<td>no</td>
+</tr>
+</table>
+
+<h3>
+blx:sqlExecuteUpdate</h3>
+This tag can be used to execute a query containing an INSERT or an UPDATE
+statement.&nbsp; It has no output.
+<p>The query can be specified in the tag itself using the "query" attribute,
+or by reference to a sqlQuery tag using the "queryRef" attribute.
+<p>If the tag is not enclosed in a sqlConnection tag, the connection JNDI
+name must be specified by using the "connection" tag.
+<p>If the tag is not enclosed in a sqlConnection tag, the connection must
+be specified by using the "connection" tag.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>query</td>
+
+<td>The query string.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>queryRef</td>
+
+<td>Reference to the id of a &lt;blx:sqlQuery> tag.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>connection</td>
+
+<td>JNDI name of the connection</td>
+
+<td>no</td>
+</tr>
+</table>
+</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

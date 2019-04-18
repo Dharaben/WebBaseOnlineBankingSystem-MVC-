@@ -1,0 +1,59 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Configuring servlets in Blazix</h2>
+Servlets are specified in the web server configuration file.
+<br>A typical servlet configuration looks like:
+<pre>servlet.name: myservlet
+servlet.myservlet.className: mypackage.MyServletClass
+servlet.myservlet.url: /mysrvlet</pre>
+A "<tt>servlet.name</tt>" line must be added for each servlet, and the
+servlet must be given a name for the web-server configuration file.&nbsp;
+This name is then used to specify other properties, namely a class which
+implements the servlet, and a URL at which the servlet will be available.
+<p>The above configuration will make the servlet available at <tt>/mysrvlet</tt>
+and will use the class <tt>mypackage.MyServletClass</tt> for the servlet
+implementation.
+<p>The servlet class must be available in the CLASSPATH, or it may be placed
+in the C:\Blazix\classes folder, or in a folder configured as "server.classDir"
+in the web configuration file.
+<p>After a new servlet entry has been added to the configuration file,
+the web server should be stopped and restarted.&nbsp; Servlets can also
+be added to a running server via the server administration tool, but this
+requires placing them in a web archive (WAR) file.&nbsp; (For development
+environments and given the quick startup time of Blazix, during development
+it may be simpler just to stop and restart the server!)
+<p>If the servlet class file has changed, it is not necessary to stop and
+start the server.&nbsp; The default web server configuration file provided
+with the installation has already configured the URL
+<br><tt>http://DESKTOP-NKM5MK3/_reload</tt>
+<br>as a URL for reloading all classes in the default application.&nbsp;
+Just visit this URL after the servlet classes have changed.</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

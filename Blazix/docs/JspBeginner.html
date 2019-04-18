@@ -1,0 +1,59 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+JSP for Beginners</h2>
+For beginners learning JSP, we recommend the JSP tutorial at <a href="http://www.jsptut.com/jsptut.html">http://www.jsptut.com/</a>
+<p>There are some server specific items that you need to know:
+<p>As you go through the JSP tutorial, the JSP files will be placed in
+<tt>C:\Blazix\webfiles</tt>
+folder (unless you have modified the default configuration.)&nbsp; The
+URL for the top level of this folder is http://DESKTOP-NKM5MK3/&nbsp;&nbsp; E.g. the
+file <tt>C:\Blazix\webfiles\test\hello.jsp</tt>, would correspond to the
+URL <a href="http://DESKTOP-NKM5MK3/hello.jsp">http://DESKTOP-NKM5MK3/test/hello.jsp</a> in your
+browser.
+<p>The JSP directory is for holding temporary JSP files, not for classes
+used by the JSP files.&nbsp; If your JSP is using any classes (e.g. a bean,)
+you can place the class files in the <tt>C:\Blazix\classes</tt> folder.&nbsp;
+You can also place it in any folder in your CLASSPATH.&nbsp; If you have
+to change the CLASSPATH, make sure to stop and restart the web server so
+it can pick up the new CLASSPATH.&nbsp; (Depending upon your system, you
+may also have to reboot the machine or log out and log back in so your
+new CLASSPATH is in effect.)&nbsp; Jar files cannot be added to the <tt>C:\Blazix\classes</tt>
+folder, they must be added to the CLASSPATH.
+<p>After learning JSP, if you find you need to debug a JSP in Blazix, there
+is a "<a href="Tools.html#jspDebug">jspdebug</a>" command available, that
+you can use to generate debuggable Java files.
+<p>Blazix also has the ability to <a href="I18n.html">internationalize</a>
+your JSPs easily, so you can write JSPs that will be seen differently by
+visitors with different language preferences.
+<p>Blazix enables the ".wsp" extension for WML files, so you can take advantage
+of JSP technology for creating dynamic pages for wireless devices.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

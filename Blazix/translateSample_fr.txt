@@ -1,0 +1,14 @@
+title=Traduction
+header=Échantillon de traduction
+content=Compte à rebours...
+-<BR>Dix
+-<BR>Neuf
+-<BR>Huit
+-<BR>Sept
+-<BR>Six
+-<BR>Cinq
+-<BR>Quatre
+-<BR>Trois
+-<BR>Deux
+-<BR>Une
+-<BR>Décollage...

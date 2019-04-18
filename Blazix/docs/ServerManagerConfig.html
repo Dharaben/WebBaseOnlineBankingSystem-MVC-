@@ -1,0 +1,216 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Web-Server Configuration</h2>
+
+<h3>
+Location</h3>
+When started from a Windows/NT or Windows/2000 service, the server manager
+configuration file is the same as the service initialization file.
+<p>Otherwise, the configuration file may be specified using the -c switch
+in the command line, e.g.
+<blockquote>
+<pre>java desisoft.tools.ServerManager -c c:\Mylocation\servermgr.ini</pre>
+</blockquote>
+If the file is not specified on the command line, the web-server searches
+for a configuration file in the following order:
+<ul>
+<li>
+if the Java property "desisoft.ServerManager.config" is set, it uses that
+as the configuration file name.</li>
+
+<li>
+it looks in the hardwired locations c:\BlazixServerManager.ini (for Windows)
+and /usr/blazix/BlazixServerManager.ini (for Unix).</li>
+
+<li>
+it looks for a ServerManager.ini file in the current directory.</li>
+</ul>
+
+<h3>
+Configuration Parameters</h3>
+The following configuration file parameters are available:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td>javaExe</td>
+
+<td>The command to start the Java executable.&nbsp; It defaults to "java",
+so the default can be used if the path is setup correctly.</td>
+</tr>
+
+<tr>
+<td>homeDir</td>
+
+<td>The directory where the servers should be started.</td>
+</tr>
+
+<tr>
+<td>classPath</td>
+
+<td>Complete classpath for the servers (including blazix.jar.)&nbsp; Can
+be over-ridden for individual servers.</td>
+</tr>
+
+<tr>
+<td>server.port</td>
+
+<td>The port number where the Server Manager should listen for the Server
+Administration tool.&nbsp; When running inside firewalls, this port should
+NOT be open for external access.</td>
+</tr>
+
+<tr>
+<td>server.address</td>
+
+<td>This can be specified on machines with multiple IP addresses.</td>
+</tr>
+
+<tr>
+<td>server.password</td>
+
+<td>A password for the Server Manager.</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>webServer.name</td>
+
+<td>The name of a Web server (for internal use within this configuration
+file only.)</td>
+</tr>
+
+<tr>
+<td>webServer.&lt;name>.config</td>
+
+<td>Full path to the Web server configuration file.</td>
+</tr>
+
+<tr>
+<td>webServer.&lt;name>.classpath</td>
+
+<td>Classpath for the web server.&nbsp; If both this parameter and the
+configuration wide "classPath" are provided, this value will take precedence
+for this web server.</td>
+</tr>
+
+<tr>
+<td>webServer.&lt;name>.clusterFile</td>
+
+<td>Full path to the cluster configuration file.&nbsp; Required if the
+web server is participating in a cluster.</td>
+</tr>
+
+<tr>
+<td>webServer.&lt;name>.logBase</td>
+
+<td>A log base name to use (default is "weblog".)</td>
+</tr>
+
+<tr>
+<td>ejbServer.name</td>
+
+<td>Name of an EJB server.</td>
+</tr>
+
+<tr>
+<td>ejbServer.&lt;name>.config</td>
+
+<td>Full path to the EJB server configuration file.</td>
+</tr>
+
+<tr>
+<td>ejbServer.&lt;name>.classpath</td>
+
+<td>Classpath for the EJB server.</td>
+</tr>
+
+<tr>
+<td>ejbServer.&lt;name>.clusterFile</td>
+
+<td>Full path to the cluster configuration file.</td>
+</tr>
+
+<tr>
+<td>ejbServer.&lt;name>.logBase</td>
+
+<td>A log base name to use (default is "ejblog".)</td>
+</tr>
+
+<tr>
+<td>jmsServer.name</td>
+
+<td>Name of a JMS server.</td>
+</tr>
+
+<tr>
+<td>jmsServer.&lt;name>.config</td>
+
+<td>Full path to the JMS server configuration file.</td>
+</tr>
+
+<tr>
+<td>jmsServer.&lt;name>.logBase</td>
+
+<td>A log base name to use (defaults is "jmslog".)</td>
+</tr>
+
+<tr>
+<td>clusterServer.name</td>
+
+<td>Name of a cluster-backup server (for Web-server clusters.)</td>
+</tr>
+
+<tr>
+<td>clusterServer.&lt;name>.config</td>
+
+<td>Full path to the cluster server's cluster configuration file.</td>
+</tr>
+</table>
+
+<p>A sample file for starting up a Web server, an EJB server and a JMS
+server is shown below:
+<blockquote><tt># Set up paths and home directory</tt>
+<br><tt>javapath: c:\jdk1.3\bin</tt>
+<br><tt>classpath: c:\Blazix\blazix.jar;C:\Blazix\classes;c:\MyClasses</tt>
+<br><tt>homeDir: c:\Blazix</tt><tt></tt>
+<p><tt># allocate a port and a password for the ServerManager itself.</tt>
+<br><tt>server.port: 4400</tt>
+<br><tt>server.password: myServerPassword</tt><tt></tt>
+<p><tt># specify the servers to be managed</tt>
+<br><tt>webServer.name: web1</tt>
+<br><tt>webServer.web1.config: c:\Blazix\web.ini</tt><tt></tt>
+<p><tt>ejbServer.name: ejb1</tt>
+<br><tt>ejbServer.ejb1.config: c:\Blazix\ejb.ini</tt><tt></tt>
+<p><tt>jmsServer.name: jms1</tt>
+<br><tt>jmsServer.jms1.config: c:\Blazix\jms.ini</tt></blockquote>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+desisoft.dsap.Ion class</h2>
+This class is used by Ion clients to look up interfaces provided by Ion
+servers.&nbsp; It contains many variations of the "<tt>lookup</tt>" method,
+which is used to lookup an interface at a remote location.&nbsp; The lookup
+may be done by specifying the interface class itself, or by specifying
+an agreed-upon URL string (not related to the web URLs.&nbsp; The ION URL
+is simply a string that the server and the client agree upon.)
+<p>The class also contains a "close" method which can be used to explicitly
+close the connection.
+<p>If server callbacks are to be used, a callback object can be provided
+via the "<tt>setCallback</tt>" method.&nbsp; If the call requires authorization,
+a username and password can be provided via the "<tt>setAuthorization</tt>"
+method.
+<pre>public class Ion
+{
+&nbsp;&nbsp;&nbsp; // Methods to lookup an interface.
+&nbsp;&nbsp;&nbsp; public Object lookup( String host, Class intf ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( String host, String url ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( String host, String url, Class intf ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( String host, int port, Class intf&nbsp; ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( String host, int port, String url&nbsp; ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( String host, int port, String url, Class intf&nbsp; ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( InetAddress host, int port, Class intf ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( InetAddress host, int port, String url ) throws IOException;
+&nbsp;&nbsp;&nbsp; public Object lookup( InetAddress host, int port, String url, Class intf ) throws IOException;
+
+&nbsp;&nbsp;&nbsp; // Method to close connection.
+&nbsp;&nbsp;&nbsp; public void close();
+
+&nbsp;&nbsp;&nbsp; // Method to specify callback object.&nbsp; If required, call BEFORE calling "lookup".
+&nbsp;&nbsp;&nbsp; public void setCallback( Object c, Class intf );
+
+&nbsp;&nbsp;&nbsp; // Method to specify username/pwd.&nbsp; If required, call BEFORE calling "lookup".
+&nbsp;&nbsp;&nbsp; public void setAuthorization( String user, String pass );
+}</pre>
+The port, if not specified, defaults to 80.&nbsp; If the URL and interface
+both are specified, both must match.
+<p>Sample usage is:
+<br><tt>&nbsp; Ion ion = new Ion();</tt>
+<br><tt>&nbsp; MyInterface myintf =</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; (MyInterface) ion.lookup( "www.myhost.com",
+MyInterface.class );</tt>
+<br><tt>&nbsp; // Use the inteface</tt>
+<br><tt>&nbsp; // ...</tt>
+<br><tt>&nbsp; // ...</tt>
+<br><tt>&nbsp; // Close when done, for better resource usage.</tt>
+<br><tt>&nbsp; // Otherwise connection will take up resources until</tt>
+<br><tt>&nbsp; // the ION object gets garbage collected.</tt>
+<br><tt>&nbsp; ion.close();</tt>
+<p>For SSL connections, use the desisoft.dsap.IonSsl class.&nbsp; This
+class has the identical behavior except that it uses SSL, and that the
+port defaults to the default SSL port of 443 if it is not specified.
+<br>&nbsp;</td>
+</tr>
+</table>
+
+</body>
+</html>

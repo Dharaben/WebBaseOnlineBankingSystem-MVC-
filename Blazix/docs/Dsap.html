@@ -1,0 +1,172 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Dynamic Stream Access Protocol (DSAP) for dynamic programming over the
+web</h2>
+
+<h3>
+Overview</h3>
+The HTTP protocol is designed primarily for static page access.&nbsp; In
+the modern environment, it is often desirable to access the web more dynamically
+than the request-response metaphor.&nbsp; Doing dynamic programming within
+the limitations of the request-response metaphor has given rise to some
+extremely complicated software designs.
+<p>The Dynamic Stream Access Protocol (DSAP) offered in Blazix makes it
+very simple to access resources dynamically over the web as a two-way stream
+rather than a request/response exchange.&nbsp; This allows applets, plugins
+or standalone programs to access a website and conduct a full remote access
+session without being restricted to translating all requirements into some
+form of request/response.
+<h3>
+Using DSAP in Blazix</h3>
+
+<h4>
+Server side</h4>
+To provide the server side of DSAP in Blazix, write an implementation of
+<tt>desisoft.dsap.Server</tt>
+interface.&nbsp; This interface has two entry points.
+<p><tt>public interface desisoft.dsap.Server {</tt>
+<br><tt>&nbsp;&nbsp; public boolean authCheck( String username, String
+pwd );</tt>
+<br><tt>&nbsp;&nbsp; public void onConnect( String arg,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ServletInputStream input,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ServletOutputStream output )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; throws IOException;</tt>
+<br><tt>}</tt>
+<p>The a<tt>uthCheck()</tt> method will be called with a username and password
+if they have been supplied, otherwise it will be called with (<tt>null</tt>,
+<tt>null</tt>)
+as arguments.&nbsp; It should return a false if access should be denied.
+<p>The <tt>onConnect()</tt> method is called to process the remote request.&nbsp;
+The input and output streams provide data to and from the client.
+<p>The <tt>onConnect()</tt> method is called in an independent thread.&nbsp;
+This method must not return until the session is complete.&nbsp;&nbsp;
+(If separate threads are started for any processing, the initial thread
+should ensure termination of these before returning.)&nbsp; When the method
+returns, the socket will be closed.
+<p>To register your implementation class, add an entry in the Webserver
+configuration file of the form:
+<p><tt><font size=-1>dsap.name: &lt;a-name-for-this-dsap-instance></font></tt>
+<br><tt><font size=-1>dsap.&lt;name>.className:&nbsp; &lt;fully-qualified-name-of-class-implementing-dsap></font></tt>
+<br><tt><font size=-1>dsap.&lt;name>.url:&nbsp; &lt;a-connection-string-that-the-client-will-need-to-know></font></tt>
+<p>The URL is not a HTTP URL, it is simply a connection string that the
+client and server agree on.&nbsp; It does not relate to a physical filename.&nbsp;
+An example entry is
+<p><tt>dsap.name:&nbsp; MyDsapServer</tt>
+<br><tt>dsap.MyDsapServer.className: my.dsap.server</tt>
+<br><tt>dsap.MyDsapServer.url: /my/dsapserver</tt>
+<p>The DSAP class must be public and must have a public no-argument constructor.&nbsp;
+The <tt>doConnect</tt>&nbsp; method must be written to support multithreading
+because it may be called in multiple threads simultaneously -- if there
+are any shared resources, access to them must be synchronized.
+<p>The connection string may contain a "?" followed by an argument string
+in the standard HTTP syntax.&nbsp; If such an argument is provided, it
+will be passed to doConnect as "<tt>arg</tt>", otherwise "<tt>arg</tt>"
+will be <tt>null</tt>.
+<p>Connection strings starting with "<tt>blazix:</tt>" are reserved for
+Blazix internal usage.
+<p>If the DSAP class buffers the output, the output must be flushed before
+it will be seen by the client!
+<h4>
+The DSAP client</h4>
+The DSAP client can be written in any language.&nbsp; For convenience,
+a Blazix class <a href="DsapClient.html">desisoft.dsap.Client</a> has been
+provided that can be used for this purpose.&nbsp; Sample usage is shown
+below:
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<tt> desisoft.dsap.Client client =</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; new desisoft.dsap.Client();</tt>
+<br><tt>&nbsp;&nbsp; client.connect( "www.myhost.com", "/my/dsapserver"
+);</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // Argumets may be specified using
+the</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // syntax "/my/dsapserver?argument"</tt>
+<br><tt>&nbsp;&nbsp; java.io.InputStream input =&nbsp; client.getInputStream();</tt>
+<br><tt>&nbsp;&nbsp; java.io.OutputStream output = client.getOutputStream();</tt>
+<br><tt>&nbsp;&nbsp; // Now input,output can be used for communication</tt>
+<br><tt>&nbsp;&nbsp; // with the server.&nbsp; Reminder: if the output
+is buffered, it</tt>
+<br><tt>&nbsp;&nbsp; // must be flushed before the server will see it!</tt>
+<h4>
+Writing DSAP clients in other languages</h4>
+DSAP clients can be written in any language that supports socket connections.&nbsp;
+The client simply needs to make a socket connection, and send the line
+<p><tt>CONNECT &lt;connection-string> DSAP/1.0</tt>
+<p>where "<tt>&lt;connection-string></tt>" stands for the actual connection
+string.&nbsp; The connection string is not case-sensitive.&nbsp; It should
+be URL-encoded, particularly if it contains any space characters.
+<p>Following the first line, the client may send any other configuration
+lines.&nbsp; Finally the client must send an empty line (similar to HTTP.)
+<p>Lines are terminated by a &lt;CR>&lt;LF> sequence.
+<p>Currently, the only configuration line defined is for authentication.&nbsp;
+If authentication is required, it must be supplied in the same form as
+the HTTP "Basic" authentication.
+<p>After the empty line has been sent, the client will get a response which
+will consist of four bytes.&nbsp; For success, the response consists of
+the characters '_' '1' &lt;CR> and &lt;LF> and for failure, the response
+consists of the characters '_' '0' &lt;CR> and &lt;LF> (the byte values
+are 95, 49, 13, 10 for success and 95, 48, 13, 10 for failure.)
+<p>If the response is a success, the session is started.&nbsp; The input/output
+of the client are now connected to the output/input streams of the DSAP
+server class.&nbsp; If the response is a failure, any following data will
+consist of an error number followed by a space and an error message text.&nbsp;
+Numbers in the 1001-1100 range should be used for the particular server-specific
+error.
+<p>A sample session is:
+<p><i>Client:</i>&nbsp; <tt>CONNECT /my/dsapserver DSAP/1.0&lt;CR>&lt;LF>&lt;CR>&lt;LF></tt>
+<br><i>Server:</i> _<tt>1&lt;CR>&lt;LF></tt>
+<p>Client and server can now send any arbitrary data to each other until
+one of them decides to close the connection.
+<p>A failed sample session is:
+<br><i>Client:</i>&nbsp; <tt>CONNECT /my/dsapserver DSAP/1.0&lt;CR>&lt;LF>&lt;CR>&lt;LF></tt>
+<br><i>Server:</i> _0<tt>&lt;CR>&lt;LF>1122 Database is down&lt;CR>&lt;LF></tt>
+<h4>
+Firewalls</h4>
+Tunnelling DSAP over HTML can have problems with proxy servers etc, because
+there is a large number and variety of proxy servers, and many of them
+understand and expect varying levels of the HTTP protocol.
+<p>Instead, Desiderata Software recommends configuing two ports in the
+firewall for DSAP.&nbsp; Recommended standard port numbers are port 180
+for normal connections and port 543 for SSL connections using DSAP.&nbsp;
+A separate instance of the Blazix web-server can then be run over these
+ports.
+<h4>
+Other Restrictions</h4>
+The DSAP protocol is only available in Blazix if Blazix is being used directly
+as a web-server, and not if it is being used as a Java-processing back-end
+for another front-end sever.&nbsp; (This is because the front-end servers
+are limited to the request-response protocol, and are not designed to provide
+data as it arrives.)
+<p>In practice, this should not be a significant restriction because Blazix
+happens to be efficient enough that it can serve very high volume sites
+without needing a front-end C++ server.
+<br>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

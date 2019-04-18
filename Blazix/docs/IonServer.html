@@ -1,0 +1,53 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+desisoft.dsap.IonServer interface</h2>
+This interface is optionaly implemented by Ion server objects.&nbsp; It
+can be used to
+<ul>
+<li>
+detect when a new connection is made</li>
+
+<li>
+detect when a connection is closed.</li>
+
+<li>
+get a callback object.</li>
+</ul>
+
+<pre>public interface IonServer
+{
+&nbsp;&nbsp;&nbsp; void onConnect();
+&nbsp;&nbsp;&nbsp; void setCallback( Object callbackObject );
+&nbsp;&nbsp;&nbsp; void onClose();
+
+}</pre>
+If the server object implements this interface, it will receive notification
+upon connection and upon connection termination, as well as a callback
+object if the client did the lookup with a callback interface.&nbsp; Any
+calls made using the callback object will be given to the client to process.
+<br>&nbsp;</td>
+</tr>
+</table>
+
+</body>
+</html>

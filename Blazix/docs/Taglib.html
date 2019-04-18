@@ -1,0 +1,87 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+The Blazix tag library</h2>
+Blazix provides a JSP 1.1 compliant tag library for easy JSP development.
+<p>To use the tag library, add the line
+<blockquote>
+<pre>&lt;%@ taglib prefix="blx" uri="/blx.tld" %></pre>
+</blockquote>
+to the JSP page.&nbsp; (This line is not required, but recommended.&nbsp;
+See <a href="#Notes">notes</a>.)
+<p>This makes available the following tags.&nbsp; Follow the links below
+for detailed explanations of the tags.
+<h4>
+<a href="Formtags.html">Form Processing Tags</a></h4>
+
+<pre>blx:setProperty
+blx:getProperty</pre>
+
+<h4>
+<a href="Emailtags.html">Email Tags</a></h4>
+
+<pre>blx:email
+blx:emailTo
+blx:emailCc
+blx:emailBcc
+blx:emailTo
+blx:emailSubject
+blx:emailAttach</pre>
+
+<h4>
+<a href="Sqltags.html">SQL tags</a></h4>
+
+<pre>blx:sqlConnection
+blx:sqlQuery
+blx:sqlExecuteQuery
+blx:sqlGet
+blx:sqlExecuteUpdate</pre>
+
+<h4>
+<a href="I18ntags.html">Internationalization Tags</a></h4>
+
+<pre>blx:xlt
+blx:xltFile</pre>
+
+<hr WIDTH="100%"><a NAME="Notes"></a><b>Notes:</b>
+<ul>
+<li>
+Any prefix may be be used, but blx is the recommended prefix.</li>
+
+<li>
+Blazix uses the "well-known URI" mechanism of JSP 1.1 to locate /blx.tld
+if it is not available through the standard mechanism.&nbsp; As per the
+recommendations in JSP 1.1 specifications, the "well-known URI" mechanism
+should not be depended upon.&nbsp; The Blazix installation includes "blx.tld"
+in the "redist" directory.&nbsp; When packaging the application, the "blx.tld"
+file should be packaged and added to web.xml.</li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

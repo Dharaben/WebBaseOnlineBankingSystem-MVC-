@@ -1,0 +1,122 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h3>
+Setting PATH and CLASSPATH on Windows</h3>
+In Java server programming using Blazix, there are many occasions when
+programmers will need to be familiar with setting these variables.&nbsp;
+Instructions are provided here on changing <tt>PATH</tt> and <tt>CLASSPATH</tt>
+variables for those who have not had occasion to use these variables.
+<p><tt>PATH</tt> and <tt>CLASSPATH</tt> are "<tt>environment variables</tt>".&nbsp;
+Both of these are a list of "<tt>directories</tt>" (also known as "<tt>folders</tt>".)&nbsp;
+In addition, <tt>CLASSPATH</tt> can also contain files with the ".jar"
+exension.
+<p>The elements of the list are separated by the semicolon character.&nbsp;
+An example of a <tt>PATH</tt> variable is
+<p><tt>C:\Windows;C:\Windows\System;c:\Jdk1.3\bin;C:\Windows\COMMAND</tt>
+<p>In this example, the <tt>PATH</tt> variable contains four entries, <tt>C:\Windows</tt>,
+<tt>C:\Windows\System</tt>, <tt>C:\Jdk1.3.bin</tt> and <tt>C:\Windows\COMMAND</tt>,
+all of them separated by the semicolon character.
+<p>The <tt>PATH</tt> variables tells the Windows system where to find programs.&nbsp;
+For instance, if you type
+<p><tt>java</tt>
+<p>in a Command prompt window, the system looks in all directories listed
+in <tt>PATH</tt> for a file named "<tt>java.exe</tt>".&nbsp; For the example
+above, the system will look in <tt>C:\Windows</tt>, then in <tt>C:\Windows\System</tt>,
+and then in <tt>C:\Jdk1.3\bin</tt> where it will presumably find the file
+<tt>java.exe</tt>
+and will then execute it.&nbsp; Since it has already found <tt>java.exe</tt>,
+it will not need to look further in the <tt>PATH</tt>.
+<p>The <tt>CLASSPATH</tt> variable is similar to <tt>PATH</tt>, but it
+is used by Java instead of the Windows system.&nbsp; It tells the <tt>java</tt>,
+<tt>javac</tt>
+and other Java commands, where to find classes.&nbsp; It can contain both
+directories as well as JAR files, because both can contain classes.&nbsp;
+If a class is part of a package, the package name is added to the directories
+in the <tt>CLASSPATH</tt>.&nbsp; So if the
+<tt>CLASSPATH</tt> contains
+a directory <tt>C:\MyClasses</tt> and the class is "<tt>mypackage.MyClass</tt>",
+java will try to find a file called <tt>C:\MyClasses\mypackage\MyClass.class</tt>.&nbsp;
+If the class is not part of a package, java will look for it directly in
+<tt>C:\MyClasses</tt>.
+<p>To see your <tt>PATH</tt> and <tt>CLASSPATH</tt> variables, type "<tt>SET</tt>"
+in a Command prompt window.
+<p>You may not have the <tt>CLASSPATH</tt> variable, in which case you
+will need to add one.
+<p>Follow the steps below to set the <tt>PATH</tt> and <tt>CLASSPATH</tt>
+variables
+<ul>
+<li>
+<a href="#win98me">On Windows 98 or ME</a></li>
+
+<li>
+<a href="#nt2k">On Windows/NT or Windows/2000</a></li>
+</ul>
+
+<p><br><a NAME="win98me"></a><b>Windows 98/ME:</b>&nbsp; There is a file
+called<tt> C:\autoexec.bat</tt> on your system.&nbsp; Edit this file in
+a text editor such as notepad.&nbsp; This file should already contain an
+entry for <tt>PATH</tt>.&nbsp; It may also contain an entry for <tt>CLASSPATH</tt>.&nbsp;
+If it does have an entry for <tt>CLASSPATH</tt>, simply add
+<p><tt>C:\Blazix\blazix.jar</tt>
+<p>to the existing <tt>CLASSPATH</tt> entry (make sure to separate it from
+the other entries by a semicolon!)&nbsp; If your <tt>autoexec.bat</tt>
+file does not contain an entry for <tt>CLASSPATH</tt>, add a new line
+<p><tt>SET CLASSPATH=.;C:\Blazix\blazix.jar</tt>
+<p>to your autoexec.bat.&nbsp; Java will interpret the "." (the dot character)
+here as "the current directory".
+<p>Similarly, add <tt>C:\Blazix</tt> to your <tt>PATH</tt> entry.&nbsp; If
+your javac.exe is not in your <tt>PATH</tt> (i.e. if typing "<tt>javac</tt>"
+in a command window gives you a "<tt>bad command or file name</tt>"), you
+will also need to find where your <tt>javac.exe</tt> (which is a part of
+your JDK) is, and add that directory to <tt>PATH</tt>.
+<p><b>IMPORTANT WARNING:</b>&nbsp; YOU MUST NOT ADD SOMETHING LIKE THE
+FOLLOWING IN YOUR <tt>AUTOEXEC.BAT</tt> FILE.
+<p><tt>SET PATH=C:\Blazix</tt>
+<p>This is because you absolutely <b>must</b> retain the old setting of
+the <tt>PATH</tt>.&nbsp; If you don't see an entry for <tt>PATH</tt> in
+the autoexec.bat file, type "<tt>PATH</tt>" in a command window to view
+the old setting of <tt>PATH</tt>.&nbsp; Add C:\Blazix to the existing entries,
+and then add a line to your <tt>autoexec.bat</tt> file.&nbsp; E.g., if
+by typing "<tt>PATH</tt>" you see "<tt>PATH=C:\Windows;C:\Windows\System;C:\Windows\COMMAND</tt>",
+then your addition to the autoexec.bat file will be
+<p><tt>SET PATH=C:\Windows;C:\Windows\System;C:\Windows\COMMAND;C:\Blazix</tt>
+<p>After you are done changing your <tt>autoexec.bat</tt> file, save it
+and <b>reboot</b> your computer so the changes will take effect.
+<p><a NAME="nt2k"></a><b>Windows/NT or Windows/2000:</b>&nbsp; Open the
+"<tt>System</tt>" icon from your Control Panel.&nbsp; On 2000, go to the
+"<tt>Advanced</tt>" tab and click the "<tt>Environment</tt>" button.&nbsp;
+On NT, go to the "<tt>Environment</tt>" tab.&nbsp; You should now see entries
+for <tt>PATH</tt> and also possibly for <tt>CLASSPATH</tt>.
+<p>Add <tt>C:\Blazix</tt> to your <tt>PATH</tt> and add <tt>C:\Blazix\blazix.jar</tt>
+to your <tt>CLASSPATH</tt>.&nbsp; Make sure to separate the new entries
+from the previous entries by the semicolon character.&nbsp; If the <tt>CLASSPATH</tt>
+does not exist, add a new environment variable <tt>CLASSPATH</tt> and set
+it to <tt>.;C:\Blazix\blazix.jar</tt>
+<p>Type "<tt>javac</tt>" in a command window.&nbsp; If it does not invoke
+the Java compiler, do a search to find out where your "<tt>javac.exe</tt>"
+file (from your JDK) is, and add that directory to your <tt>PATH</tt> also.
+<br>&nbsp;</td>
+</tr>
+</table>
+
+</body>
+</html>

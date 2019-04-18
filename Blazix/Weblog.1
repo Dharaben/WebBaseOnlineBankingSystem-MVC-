@@ -1,0 +1,60 @@
+Log file: C:\Blazix\Weblog.log
+Blazix Web Server 1.2
+Copyright (C) Desiderata Software, 2001-2006
+All rights reserved
+
+Configuration file: C:\Blazix\web.ini
+Initializing application context "default"
+Clustering: no cluster configuration file found
+Hostname: DESKTOP-NKM5MK3  IP Address: 10.0.2.15  Port: 8887
+Index URL: http://DESKTOP-NKM5MK3:8887/
+Blazix Web Server operational at Fri Nov 30 10:52:43 EST 2018
+10:52:51  0:0:0:0:0:0:0:1  GET  /CSCI6810/login.html
+10:52:51  0:0:0:0:0:0:0:1  GET  /CSCI6810/Logo.html
+10:52:51  0:0:0:0:0:0:0:1  GET  /CSCI6810/Display.html
+10:52:51  0:0:0:0:0:0:0:1  GET  /CSCI6810/logo.png
+10:52:51  0:0:0:0:0:0:0:1  GET  /CSCI6810/7.jpg
+10:52:51  0:0:0:0:0:0:0:1  GET  /CSCI6810/0.jpg
+10:53:53  0:0:0:0:0:0:0:1  POST  /LoginServlet
+OnlineLogin: init
+10:54:09  0:0:0:0:0:0:0:1  GET  /CSCI6810/PreOverview.jsp?UserID=dhara1790&Name=Dhara%20Patel
+21324532
+12347658
+10101010
+10:54:10  0:0:0:0:0:0:0:1  GET  /CSCI6810/acc.jpg
+10:54:14  0:0:0:0:0:0:0:1  GET  /CSCI6810/PreAccount.jsp?UserID=dhara1790&Name=Dhara%20Patel
+10:54:14  0:0:0:0:0:0:0:1  GET  /CSCI6810/account.jpg
+10:54:18  0:0:0:0:0:0:0:1  GET  /CSCI6810/PreWithdraw.jsp?UserID=dhara1790&Name=Dhara%20Patel
+21324532
+12347658
+10101010
+10:54:19  0:0:0:0:0:0:0:1  GET  /CSCI6810/withdraw.png
+10:54:21  0:0:0:0:0:0:0:1  GET  /CSCI6810/PreDeposit.jsp?UserID=dhara1790&Name=Dhara%20Patel
+21324532
+12347658
+10101010
+10:54:21  0:0:0:0:0:0:0:1  GET  /CSCI6810/Deposit.jpg
+10:54:23  0:0:0:0:0:0:0:1  GET  /CSCI6810/PreInquire.jsp?UserID=dhara1790&Name=Dhara%20Patel
+21324532
+12347658
+10101010
+10:54:23  0:0:0:0:0:0:0:1  GET  /CSCI6810/T1.jpg
+10:54:53  0:0:0:0:0:0:0:1  POST  /Inquire
+Inquire: init
+query: SELECT * FROM Transactions WHERE TransactionDate BETWEEN '11/21/2018' AND '11/29/2018' AND CustomerID ='dhara1790'
+10:55:02  0:0:0:0:0:0:0:1  GET  /CSCI6810/PreWithdraw.jsp?UserID=dhara1790&Name=Dhara%20Patel
+21324532
+12347658
+10101010
+10:55:04  0:0:0:0:0:0:0:1  GET  /CSCI6810/PreTransfer.jsp?UserID=dhara1790&Name=Dhara%20Patel
+21324532
+12347658
+10101010
+10:55:04  0:0:0:0:0:0:0:1  GET  /CSCI6810/Transfer.jpg
+10:55:20  0:0:0:0:0:0:0:1  POST  /Transfer
+Transfer: init
+true
+Balance after withdraw:   100570.0
+The current balancein Saving account is:   99990.0
+The present balance in Saving account after depositing is:   199990.0
+(Fri Nov 30 10:55:20 EST 2018) (Transfer) (dhara1790)

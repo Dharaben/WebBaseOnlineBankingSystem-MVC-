@@ -1,0 +1,229 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+TUTORIAL:&nbsp; Java Interfaces Over the Net (ION)</h2>
+
+<h3>
+Prerequisites</h3>
+ION runs over the Blazix Web server.&nbsp; Make sure you have correctly
+installed the Blazix web server and are able to view pages in it.&nbsp;
+Familiarize yourself with the location of the web.ini file and its contents.&nbsp;
+You must also be familiar with setting the classpath, and with the function
+of the classpath in loading Java classes.&nbsp; It might be convenient
+to create a directory (e.g. C:\IonTut) for the classes in this tutorial,
+and place that directory in the classpath.
+<h3>
+The interface</h3>
+First of all, we need to decide the interface.&nbsp; For this tutorial,
+we will use a sample task of computing a factorial.
+<p>Create a file Factorial.java with the following interface definition
+in it.
+<p><tt>public interface Factorial {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; public int computeFactorial( int n );</tt>
+<br><tt>}</tt>
+<p>Compile this file, and make sure the compiled interface (.class file)
+is available in the classpath.
+<h3>
+Registering the interface</h3>
+Run the command
+<p><tt>blxionreg Factorial</tt>
+<p>It should output a message stating the interface was successfully registered.
+<h3>
+Providing an implementation of the interface</h3>
+Now create a file named MyIonServer.java with the following code in it:
+<p><tt>public class MyIonServer implements Factorial {</tt>
+<br><tt>&nbsp;&nbsp; public int computeFactorial( int n )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int result = 1;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( int i = 2; i &lt;=
+n; i++ )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+result = result * i;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println(
+"Computed !" + n +</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+" = " + result );</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// Some server-side output here!</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return result;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; }</tt>
+<br><tt>}</tt>
+<p>Compile this file and make sure this class is available in the classpath.
+<h3>
+Configuring the ION server class</h3>
+Add the following lines to your web.ini file:
+<ol><tt>ion.name: MyServer</tt>
+<br><tt>ion.MyServer.className: MyIonServer</tt>
+<br><tt>ion.MyServer.interface: Factorial</tt></ol>
+Now at the server side, we have configured an object that can compute the
+factorial of a number.&nbsp; When a client looks up the <tt>Factorial</tt>
+interface and makes method calls, this registered object will be given
+those method calls.&nbsp;
+<h3>
+ION Client</h3>
+Write an ION user class in a file IonUser.java:
+<p><tt>import desisoft.dsap.*;</tt>
+<p><tt>public class IonUser {</tt>
+<br><tt>&nbsp; public static void main( String[] args )</tt>
+<br><tt>&nbsp; {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; try {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Ion ion = new Ion();</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Factorial fact = (Factorial)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ion.lookup( "www.mytesthost.com",
+Factorial.class );</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println( "Factorial 3
+= " +</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+fact.computeFactorial( 3 ));</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println( "Factorial 4
+= " +</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+fact.computeFactorial( 4 ));</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ion.close();</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; } catch (Exception ex) {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ex.printStackTrace();</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; }</tt>
+<br><tt>&nbsp; }</tt>
+<br><tt>}</tt>
+<p>IMPORTANT:&nbsp; Make sure to replace "www.mytesthost.com" by your host
+name or by the string "localhost".
+<h3>
+Testing everything</h3>
+Bring up the Blazix web server.&nbsp; (If it was already running before
+you changed the web.ini file, stop and restart it.)
+<p>When the Blazix server has come up, run the client class in another
+window.
+<p>If you have access to another computer, you can run the client there.&nbsp;
+At this computer, you will need the client class and the interface class,
+but not the server classes.&nbsp; The server class <tt>MyIonServer</tt>
+is hidden from the client.&nbsp; The client does not need to register the
+interfaces, either.&nbsp; At the client computer, you will also need either
+the full <i>Blazix.jar</i> in the classpath, or the <i>IonClient.jar</i>
+file found in the redistribution directory.
+<h3>
+Adding a callback interface</h3>
+The next step is to add a callback.&nbsp; Let us define a callback interface
+first.
+<p><tt>public interface MyCallback {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; void intermediateStep( String message );</tt>
+<br><tt>}</tt>
+<p>Compile and register this interface using <tt>blxionreg</tt>.
+<h3>
+Adding an object to implement the callback interface</h3>
+Now we will define a client-side object to implement the callback interface.&nbsp;
+We can add this to our existing IonUser class.&nbsp; Change the class definition
+line to
+<p><tt>public class IonUser implements MyCallback {</tt>
+<p>Then add the method
+<p><tt>&nbsp;&nbsp; public void intermediateStep( String message )</tt>
+<br><tt>&nbsp;&nbsp; {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println(
+"Server says: " + message );</tt>
+<br><tt>&nbsp;&nbsp; }</tt>
+<p>Tell the remote server about this object, by adding the line
+<p><tt>&nbsp;&nbsp;&nbsp; ion.setCallback( new IonUser(), MyCallback.class
+);</tt>
+<p>after the ion object has been instantiated in the "<tt>main</tt>" method
+(but before the call to "<tt>lookup</tt>".)
+<h3>
+Using the callback method from the server object</h3>
+We now need to modify our server class a little.&nbsp; Modify the class
+definition line to
+<p><tt>class MyIonServer implements Factorial, desisoft.dsap.IonServer
+{</tt>
+<p>We now need to add the methods of <a href="IonServer.html">IonServer</a>
+interface.&nbsp; We will need to save the callback object, so add a member
+to the class:
+<blockquote><tt>MyCallback callbackObj = null;</tt></blockquote>
+Then add the IonServer methods:
+<p><tt>&nbsp;&nbsp;&nbsp; public void onConnect()&nbsp; {}&nbsp; // We
+are not interested in these two</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; public void onClose() { }</tt>
+<p><tt>&nbsp;&nbsp;&nbsp; public void setCallback( Object obj )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; callbackObj = (MyCallback)
+obj;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; }</tt>
+<p>Now to make the callbacks, modify the factorial method:
+<p><tt>&nbsp;&nbsp; public int computeFactorial( int n )</tt>
+<br><tt>&nbsp;&nbsp; {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int result = 1;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ( callbackObj != null )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; callbackObj.intermediateStep(
+"Started computation" );</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( int i = 2; i &lt;= n; i++
+) {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; result =
+result * i;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if ( callbackObj
+!= null )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+callbackObj.intermediateStep(</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+"Intermediate result = " + result );</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.out.println( "Computed !"
++ n +</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+" = " + result );</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// Some server-side output here!</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return result;</tt>
+<br><tt>&nbsp;&nbsp; }</tt>
+<br>&nbsp;
+<p>Finally, add the new callback interface to the web configuration file:
+<p><tt>&nbsp;&nbsp;&nbsp; ion.MyServer.callback: MyCallback</tt>
+<p>That's it!&nbsp; Test everything now, and you should see output from
+the callbacks.
+<p>Within the callback methods, you can also make other ion calls using
+the original "<tt>fact</tt>" object. ( Of course, you will have to find
+a way to make sure the callback object has the original "fact" object available.)&nbsp;
+This is left as an exercise -- add a method "<tt>void doCallback( boolean
+);</tt>" to "Factorial" that lets the client control whether the server
+calls "<tt>intermediateStep" on not.&nbsp;</tt> Then stop the "<tt>intermediateStep"</tt>
+calls by calling "<tt>doCallback( false );</tt>" from the first or second
+client callback, so only one or two callbacks are made.
+<h3>
+SSL</h3>
+ION can be run over SSL.&nbsp; For this, make sure you have your web-server
+setup for <a href="Ssl.html">SSL</a>.&nbsp; Use the default SSL port 443
+if possible, so the ION clients won't need to specify a port number.
+<p>Also make sure the SSL classes are available to the client.&nbsp; Then
+replace the statement
+<p>&nbsp;&nbsp;<tt>&nbsp; Ion ion = new Ion();</tt>
+<p>by
+<br>&nbsp;&nbsp;<tt> IonSsl ion = new IonSsl();</tt>
+<p>Everything else can stay as is, because IonSsl is derived from Ion.
+<p>Now the ION protocol will go over SSL for added security.</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

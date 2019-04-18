@@ -1,0 +1,62 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Cluster Administration in Blazix</h2>
+The <a href="Tools.html#blxui">Blazix Server Administration tool</a> can&nbsp;
+be used to remotely shutdown and start servers, view log files, view or
+upload configurations, check status, and deploy or redeploy EJB Jars and
+WEB archive (WAR) files.
+<p>To take advantage of these facilities, the servers should be setup to
+be managed by the Blazix Server Manager.&nbsp; The server manager runs
+at each node in the cluster, and manages all Blazix servers (web servers,
+EJB servers, JMS servers, cluster backup servers) at that node.&nbsp; Only
+one copy of the server manager needs to be run at the node.
+<p>On Windows systems (NT or 2000), the server manager can be started via
+the provided Blazix Windows Service program.&nbsp; This program should
+be configured and installed as a service.
+<p>For non-Windows systems, the server manager should be started via the
+machine startup sequence (the "RC" files in typical Unix systems.)&nbsp;
+The command file (shell file or batch file) that does this should change
+directory to the Blazix installation directory, it should then set the
+classpath, and then it should invoke the server manager via the
+<blockquote><tt>java desisoft.tools.ServerManager</tt></blockquote>
+command.
+<p>In both cases, Windows or other systems, a configuration file for the
+server manager is required.&nbsp; In the case of Windows, the NT (or Windows
+2000) service's ".ini" file also serves as the server manager's configuration
+file, so a separate file does not need to be written -- instead the configuration
+commands should be placed in the service's ".ini" file.
+<p>On the machine from where the servers will be managed (i.e. from where
+the <a href="Tools.html#blxui">Server Administration tool</a> will be run),
+the cluster.ini file must contain configuration information for each Server
+Manager on the cluster.
+<p>For further details, see the <a href="Ntservice.html">Blazix Windows
+Service</a> or the <a href="ServerManagerConfig.html">Server Manager configuration</a>.</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

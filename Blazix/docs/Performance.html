@@ -1,0 +1,68 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h3>
+Performance Pointers</h3>
+Following are some suggestions to get the best performance from Blazix:
+<ul>
+<li>
+If using server-based clustering, make sure all cluster servers are operational.&nbsp;
+Blazix web-servers will lose performance if they are continually trying
+to connect to a cluster server.</li>
+
+<li>
+Set-up EJBs to use the IIOP protocol instead of the JRMP default.</li>
+
+<li>
+Set-up EJB data cacheing in the most appropriate manner for your application.&nbsp;
+This is a tradeoff between performance and reliability, and many applications
+may be able to get better performance by changing the default cacheing
+behavior (default is "on" for loads, "save if changed" for stores.&nbsp;
+If cacheing being "on" is acceptable for stores, this may have significant
+performance improvement.)</li>
+
+<li>
+Minimize Java synchronizations.&nbsp; If there are multiple synchronizations
+in a class, use separate lock objects rather than "<tt>this</tt>" if the
+synchronizations are unrelated.</li>
+
+<li>
+When the web-site files are no longer changing, pack them in a WAR file
+using the Archive Packer tool, instead of keeping them as separate files.&nbsp;
+Note that the "<tt>default</tt>" application can also be set-up to run
+from a WAR file.</li>
+
+<li>
+Make sure entity EJBs are backed by a fast database.&nbsp; Database performance
+is a limiting factor in Entity Bean performance.</li>
+
+<li>
+Do not unnecessarily flush or close "<tt>out</tt>" in JSP files.&nbsp;
+If output has not been flushed and the total data length is available at
+connection commit time, Blazix will be able to honor the Netscape browsers'
+"<tt>Connection: keep-alive</tt>" request, thereby improving performance.</li>
+</ul>
+</td>
+</tr>
+</table>
+
+</body>
+</html>

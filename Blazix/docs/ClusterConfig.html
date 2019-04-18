@@ -1,0 +1,276 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Desiderata Software">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Cluster Configuration</h2>
+
+<h3>
+Overview</h3>
+Blazix servers may be arranged in co-operative "cluster"s.&nbsp;
+<p>The clusters are described using a "cluster configuration file".&nbsp;
+The cluster configuration file is used by the various servers, and also
+by the <a href="Tools.html#blxui">Server Administration</a> tool.&nbsp;
+The cluster configuration file should be identical for all web servers
+and tools -- it should be copied to all server host machines, or made available
+via a network file system.
+<p>For use by the Server Administration tool, the cluster configuration
+file should list all <a href="ServerManager.html">Server Managers</a> on
+the cluster.
+<h3>
+Location</h3>
+The cluster configuration file may be specified using the -t switch in
+the command line, e.g.
+<blockquote>
+<pre>blxweb -t c:\Mylocation\mycluster.ini</pre>
+</blockquote>
+If the file is not specified on the command line, the servers and tools
+search for a cluster configuration file as described below:
+<ul>
+<li>
+if the Java property "desisoft.cluster.config" is set, its value is used
+for the cluster configuration file name.</li>
+
+<li>
+the hardwired locations c:\BlazixCluster.ini (for Windows) and /usr/blazix/Cluster.ini
+(for Unix) are searched.</li>
+
+<li>
+if a file named cluster.ini exists in the current directory, it is used.</li>
+</ul>
+The installation process does not create a cluster configuration file.
+<h3>
+Concepts</h3>
+<b>Smart Load Balancers:</b>&nbsp; This term is used here to refer to load
+balancers that are "session aware", so that once an incoming request from
+a client has been assigned to a particular server, all further incoming
+requests from the same client will be assigned to the same server.&nbsp;
+This reduces the requirements for clustering overhead.
+<p><b>Cluster Servers:</b>&nbsp; If the property "backup.type" is set to
+"server", then one or more "cluster servers" must be configured.&nbsp;
+The cluster servers are used to store serialized session data.&nbsp; For
+"random" load balancing, there should be at least two cluster servers to
+avoid a single point of failure.
+<p>Cluster servers may be located on the same machine as web servers, but
+in that case, the web server should be told to use that particular cluster
+server in read-only mode.&nbsp; (Otherwise, that machine can becomes a
+single point of failure for some sessions.)&nbsp; The read-only mode is
+set in individual web-server configuration files using the "backup.readOnly"
+property.
+<h3>
+Cluster Configuration Parameters</h3>
+The following cluster configuration file parameters are available:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td>web.admin</td>
+
+<td>Hostname and administration port number of a web server.&nbsp; The
+host name and port number must be separated by a ":" character.&nbsp; The
+parameter can be repeated multiple times.&nbsp; Each web server in the
+cluster should be listed.</td>
+</tr>
+
+<tr>
+<td>ejb.admin</td>
+
+<td>Hostname and administration port number of an EJB server.&nbsp; The
+host name and port number must be separated by a ":" character.&nbsp; The
+parameter can be repeated multiple times.&nbsp; Each EJB server in the
+cluster should be listed.</td>
+</tr>
+
+<tr>
+<td>jms.server</td>
+
+<td>Hostname and <b>server</b> port of a JMS server.&nbsp; The host name
+and port number must be separated by a ":" character.&nbsp; The parameter
+can be repeated multiple times.&nbsp; Each JMS server in the cluster should
+be listed.</td>
+</tr>
+
+<tr>
+<td>jms.admin</td>
+
+<td>Hostname and <b>administration</b> port number of an JMS server.&nbsp;
+The host name and port number must be separated by a ":" character.&nbsp;
+The parameter can be repeated multiple times.&nbsp; Each EJB server in
+the cluster should be listed.</td>
+</tr>
+
+<tr>
+<td>serverManager.name</td>
+
+<td>Name of a server manager.&nbsp; For internal use in this configuration
+file only -- as multiple server managers can be configured, each configuration
+is identified by a name.</td>
+</tr>
+
+<tr>
+<td>serverManager.&lt;name>.host</td>
+
+<td>Host name or address of the server manager.</td>
+</tr>
+
+<tr>
+<td>serverManager.&lt;name>.port</td>
+
+<td>Port number of the server manager (as specified in the server manager's
+configuration file.)</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+
+<tr>
+<td>loadBalancer.type</td>
+
+<td>This parameter is required for web-server clustering, and must have
+the value "smart" or "random".&nbsp; It indicates whether the front-end
+load balancer assigns requests randomly or is session-aware (smart.)&nbsp;
+Blazix takes advantage of session-aware load balancers to minimize clustering
+overhead.&nbsp; If this parameter is not present, web-server clustering
+will not be enabled.</td>
+</tr>
+
+<tr>
+<td>backup.type</td>
+
+<td>This parameter is required for web-server clustering, and must have
+the value "file" or "server".&nbsp; It indicates whether session data is
+to be backed to a central network file server, or to a Blazix cluster server.</td>
+</tr>
+
+<tr>
+<td>backup.location</td>
+
+<td>Path to a Network File System directory which will be used to backup
+session data.&nbsp; All servers must have read, write, create and delete
+access within the directory.</td>
+</tr>
+
+<tr>
+<td>clusterServer.name</td>
+
+<td>If using the backup.type "server", one or more cluster servers must
+be configured in the cluster configuration file.&nbsp; This parameter is
+used to assign a name to each cluster server.</td>
+</tr>
+
+<tr>
+<td>clusterServer.&lt;name>.host</td>
+
+<td>Machine where the cluster server will run.&nbsp; This can be an IP
+address or a host name.</td>
+</tr>
+
+<tr>
+<td>clusterServer.&lt;name>.port</td>
+
+<td>A port number for the cluster server.</td>
+</tr>
+
+<tr>
+<td>clusterServer.&lt;name>.adminPort</td>
+
+<td>Administration port for the cluster server (different from the default
+port of the cluster which is used for backup operations.)</td>
+</tr>
+
+<tr>
+<td>clusterServer.&lt;name>.adminPassword</td>
+
+<td>Administration password</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+</table>
+
+<h3>
+&nbsp;Sample cluster configuration file</h3>
+
+<blockquote>
+<pre># cluster members
+web.admin: myhost1:1201
+web.admin: myhost2:1201
+web.admin: myhost3:1201
+
+ejb.admin: myhost4:1404
+ejb.admin: myhost5:1404
+
+jms.server: myhost6:1505
+jms.server: myhost7:1505</pre>
+
+<pre>jms.admin: myhost6:1509
+jms.admin: myhost7:1509
+
+# Server managers
+
+serverManager.name: myhost1
+serverManager.myhost1.host: myhost1.com
+serverManager.myhost1.port: 2001
+
+serverManager.name: myhost2
+serverManager.myhost2.host: 201.101.101.22
+serverManager.myhost2.port: 2001</pre>
+
+<pre>
+# Load balancer type
+loadBalancer.type: smart
+
+# backup type
+backup.type: server
+
+# If back.type were file, a
+# backup location would be needed
+
+# backup.location: F:\BlazixClusters\CommonDir
+
+clusterServer.name: cls1
+clusterServer.name: cls2
+
+clusterServer.cls1.host: myClusterHost1
+clusterServer.cls1.port: 3050
+clusterServer.cls1.adminPort: 3051
+clusterServer.cls1.adminPassword: mypwd</pre>
+
+<pre>clusterServer.cls2.host: myClusterHost2
+clusterServer.cls2.port: 3050
+clusterServer.cls2.adminPort: 3051
+clusterServer.cls2.adminPassword: mypwd</pre>
+</blockquote>
+</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

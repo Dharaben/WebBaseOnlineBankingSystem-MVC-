@@ -1,0 +1,84 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Blazix JSP features for Advanced users</h2>
+
+<blockquote>
+<br><a href="#forms">Forms Processing</a>
+<br><a href="#sql">SQL</a>
+<br><a href="#sql">Email</a>
+<br><a href="#i18n">Internationalization</a>
+<br><a href="#reserved">Reserved Variable Names</a>
+<br><a href="#wsp">WSP</a></blockquote>
+
+<h3>
+<a NAME="forms"></a>Forms Processing</h3>
+If you have processed user input from HTML forms in JSP, you will appreciate
+the changes Blazix brings!
+<p>Blazix takes advantage of JSP 1.1 "standard tag library" mechanism to
+add a Blazix tag library.&nbsp; There are only two tags added by Blazix
+tag library for forms processing, but just these two tags can cut down
+your forms processing workload by more than half!&nbsp; See the <a href="Taglib.html">Blazix
+tag library</a> for details on how to use the Blazix tag library and details
+on the forms processing tags.
+<h3>
+<a NAME="sql"></a>SQL</h3>
+SQL is often used in conjunction with JSPs.&nbsp; In addition to the forms
+processing tags, Blazix also includes a short and effective set of SQL
+tags to make SQL writing an easy task.
+<h3>
+<a NAME="email"></a>Email</h3>
+Sending email from a JSP page is very simple with Blazix.&nbsp; Simple
+email, HTML email or email with attachments can all be handled very easily.&nbsp;
+See <a href="Taglib.html">Blazix tag library</a> for details .
+<h3>
+<a NAME="i18n"></a>Internationalization</h3>
+Just because JSP makes it so easy to embed Java code directly inside HTML,
+internationalization can become much more complicated!&nbsp; Blazix tag
+library also includes tags for internationalization.&nbsp; These do require
+a bit more work for tagging the pieces of language to translate, but this
+little bit of extra work saves serious troubles at internationalization
+time.
+<h3>
+<a NAME="reserved"></a>Reserved Variable Names</h3>
+Blazix reserves variables name starting with <tt>_ds</tt> or <tt>_desisoft</tt>
+or <tt>_blazix</tt> and attribute name strings starting with "<tt>desisoft.</tt>"
+or "<tt>blazix.</tt>".&nbsp; These prefixes should not be used in development.
+<h3>
+<a NAME="wsp"></a>WSP</h3>
+Blazix also makes the JSP technology available for writing WML, for wireless
+devices.&nbsp; You can just write normal WML pages, rename them with the
+extension .wsp, and embed Java in them as with the .jsp pages.&nbsp; The
+server will take care of the book-keeping.&nbsp; It will track the different
+versions of index.jsp, index.wsp etc. The wireless visitors will be automatically
+routed to index.wml and index.wsp instead of index.html and index.jsp.&nbsp;
+And if any situations require a message from the server, the message will
+go in approprite WML instead of in HTML.</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

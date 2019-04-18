@@ -1,0 +1,203 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+The Blazix tag library:&nbsp; Form processing tags</h2>
+The tags available for forms processiong are <tt>blx:setProperty</tt> and
+<tt>blx:getProperty</tt>
+<p>To work with multiple-selection list boxes using these tags, provide
+getter/setter methods that return/accept "<tt>String[]</tt>", to retrieve
+or set an array of values.
+<h3>
+blx:setProperty</h3>
+This tag is similar to jsp:setProperty, with improved handling for empty
+strings and exceptions.
+<p>A method may be named via the <i>onError</i> attribute&nbsp; to handle
+errors and continue processing.&nbsp; Empty values entered&nbsp; by users
+reset the bean fields.&nbsp; (For this to work with checkboxes, list all
+checkboxes in the <i>checkbox</i> attribute.)&nbsp; Set <i>stringNull</i>
+attribute to true if empty values should reset string objects to null,
+false if empty values should reset string objects to the empty string.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>name</td>
+
+<td>Name of bean</td>
+
+<td>yes</td>
+</tr>
+
+<tr>
+<td>property</td>
+
+<td>Bean property to set.&nbsp; Use * to set all properties.</td>
+
+<td>yes</td>
+</tr>
+
+<tr>
+<td>onError</td>
+
+<td>Name of a method which will be called upon an exception.&nbsp; The
+method may be a public method declared in the JSP page itself.&nbsp; Otherwise,
+it must be a public static method, and its fully qualified name must be
+specified in the tag.&nbsp; If this field is not specified, exceptions
+will be throw to the JSP page, terminating tag processing.&nbsp; The method
+signature is
+<br><tt>&nbsp; public void onError( String fieldname,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+String value,</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Exception exception );</tt></td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>stringNull</td>
+
+<td>Indicates whether to set strings to <tt>null</tt> or to the empty string
+when the form sends an empty field.&nbsp; Set to <tt>true</tt> or <tt>false</tt>.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>checkbox</td>
+
+<td>Lists names of all the checkbox fields in the form.&nbsp; If the checkboxes
+are not listed in this attribute, they will not be reset because the browsers
+do not send checkbox field names.
+<br>Separate multiple checkbox field names by commas.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>emptyInt</td>
+
+<td>Specifies an "empty" value for the integers.&nbsp; If the form sends
+an empty field, the integers are set to this value.&nbsp; By default, the
+empty value is 0.</td>
+
+<td>no</td>
+</tr>
+</table>
+
+<h3>
+blx:getProperty</h3>
+This tag is the inverse of <tt>jsp:setProperty</tt> or <tt>blx:setProperty</tt>.
+<p>Instead of retriving form fields into a bean, it places data from a
+bean into an outgoing form.
+<p>The input fields which are being modified&nbsp; must be enclosed beteen
+&lt;blx:getProperty> and &lt;/blx:getProperty>.&nbsp; The entire form may
+be enclosed between a single tag instance, or multiple tag instances may
+be used to enclose multiple input fields.
+<p>This tag works on the INPUT, SELECT and TEXTAREA fields.
+<p>Attributes:
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td><b>Attrribute Name</b></td>
+
+<td><b>Attribute Description</b></td>
+
+<td><b>Required</b></td>
+</tr>
+
+<tr>
+<td>name</td>
+
+<td>Name of bean</td>
+
+<td>yes</td>
+</tr>
+
+<tr>
+<td>property</td>
+
+<td>Property to use.&nbsp; * for all properties.</td>
+
+<td>yes</td>
+</tr>
+
+<tr>
+<td>dateFormat</td>
+
+<td>Describes how any outgoing date objects should be formatted.&nbsp;
+Should be <tt>short</tt>, <tt>medium</tt>, <tt>long</tt> or <tt>full</tt>.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>timeFormat</td>
+
+<td>Describes how any outgoing date objects should be formatted.&nbsp;
+Should be <tt>short</tt>, <tt>medium</tt>, <tt>long</tt> or <tt>full</tt>.</td>
+
+<td>no</td>
+</tr>
+
+<tr>
+<td>emptyInt</td>
+
+<td>Defines an "empty" value for integers.&nbsp; If the bean contains this
+value, the form will be set to the empty string.&nbsp; By default, there
+is no empty value.</td>
+
+<td></td>
+</tr>
+</table>
+
+<p>To format date objects as date only, specify a value for <i>dateFormat</i>
+only.&nbsp; To format date objects as time only, specify a value for <i>timeFormat</i>
+only.
+<p>Example:
+<p>The following example assumes that the bean "testBean" has a method
+named "getValue()".&nbsp; The method will be called and the value returned
+from it wil be placed in the &lt;INPUT> tag.
+<pre>&lt;blx:getProperty name=testBean property=* dateFormat="short">
+&lt;FORM METHOD=POST ACTION=target.jsp>
+Value &lt;INPUT NAME=value TYPE=TEXT>&lt;BR>
+&lt;INPUT TYPE=SUBMIT>
+&lt;/FORM>
+&lt;/blx:getProperty></pre>
+</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

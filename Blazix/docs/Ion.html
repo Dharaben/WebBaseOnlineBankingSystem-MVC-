@@ -1,0 +1,216 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Interfaces Over the Net (ION)</h2>
+
+<h3>
+Overview</h3>
+ION is a technology for distributed processing over the net.&nbsp; ION
+is based on Java interfaces.&nbsp; The sever implements a particular Java
+interface and the client looks up the interface and uses it -- that's all
+there is to it!&nbsp; The server can also make callbacks to the client
+side via "callback interface"s.
+<p>ION differs from earlier technologies such as RMI and EJB in its extreme
+simplicity, and in the ability to easily make callbacks to the client.&nbsp;
+Complementing the rather heavyweight technologies such as RMI and EJB,
+the lightweight ION helps make a complete spectrum of distributed processing
+technologies available for Java designers.
+<p>ION technical details are given below.&nbsp; An easy step-by-step <a href="IonTut.html">ION
+tutorial</a> is also included.
+<h3>
+ION steps</h3>
+The first step is to define the interface that the server will provide,
+and that the client will look up.&nbsp; The&nbsp; interface can be any
+user defined interface, with the restriction that all argument and return
+types must either be primitive Java objects, or they must be serializable.
+<p>Once the interface has been defined and compiled and is available in
+the client and server class paths, the further steps are:
+<ul>
+<li>
+Register the interface at the web-server.</li>
+
+<li>
+Write a class that implements the interface.</li>
+
+<li>
+Configure this class in the web configuration file (web.ini) of the target
+computer.</li>
+
+<li>
+Lookup the interface from the client and use it.</li>
+</ul>
+The server can also make callbacks to the client.&nbsp; For instance, the
+client may ask the server to call a method at the client side whenever
+some data item changes.&nbsp; Or the client may ask for a status via a
+callback every minute.
+<p>For callbacks, a second interface is used.&nbsp; This interface is also
+registered at the web-server.&nbsp; But it is implemented by the client
+rather than by the server.&nbsp; When the client performs the lookup for
+the server-interface, the client also has the opportunity to specify the
+callback interface.
+<p>Multiple threads may be used by looking up the server-instance in each
+thread.&nbsp; However, within each thread, all method calls are sequential.&nbsp;
+When the client calls the server, the client is blocked until the call
+completes.&nbsp; If the server makes callbacks, the original client call
+is still blocked, though the client thread executes again to service the
+callbacks.&nbsp; (Within the callbacks, the client is also allowed to make
+other server calls.)
+<p>ION callbacks are never server initiated.&nbsp; The server can only
+make callbacks when it is in the middle of processing a client call.
+<h3>
+An example ION session</h3>
+As a very simple example, an interface to have a factorial computed at
+a remote machine may look like this:
+<p><tt>package compute;</tt>
+<br><tt>public interface Factorial {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; public int computeFactorial( int n );</tt>
+<br><tt>}</tt>
+<p>At the server side, an object is registered that can compute the factorial.&nbsp;
+When a client looks up the <tt>Factorial</tt> interface and makes method
+calls, this registered object will be given those method calls.
+<h3>
+ION Client</h3>
+The ION client needs to lookup an interface at a remote machine.&nbsp;
+This is done by calling the method "<tt>lookup</tt>" in the "Ion" class,
+with the remote host's name and the interface that is needed.
+<br>A sample ION client program segment may look like
+<p><tt>import desisoft.dsap.*;</tt>
+<br><tt>import compute.Factorial;</tt>
+<p><tt>// ...</tt>
+<br><tt>Ion ion = new Ion();</tt>
+<br><tt>compute.Factorial fact = (compute.Factorial)</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ion.lookup( "www.myserverhost.com",
+compute.Factorial.class );</tt>
+<br><tt>System.out.println( "Factorial 3 = " +</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+fact.computeFactorial( 3 ));</tt>
+<br><tt>System.out.println( "Factorial 4 = " +</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+fact.computeFactorial( 4 ));</tt>
+<br><tt>// ...</tt>
+<p><tt>ion.close();</tt>
+<p>Here the client looks up an implementation of "<tt>compute.Factorial</tt>"
+interface at the remote host "<tt>www.myserverhost.com</tt>".&nbsp; Assuming
+a server class has been registered at <tt>www.myserverhost.com</tt> that
+implements this interface, the client will get an interface object.&nbsp;
+The client then uses this interface object to execute its methods.&nbsp;
+The methods will actually run at "<tt>www.myserverhost.com</tt>".
+<p>When done, the client closes the connection by calling "<tt>close</tt>".
+<p>The methods needed by ION at the client side are in the <a href="IonClass.html">Ion
+class</a>.&nbsp; For using ION over SSL, the Ion class is replaced by its
+derived class IonSsl.
+<h3>
+ION Server class implementation</h3>
+The ION server class is a class that implements a given serve interface.&nbsp;
+A sample server implementation is
+<p>package mypackage;
+<br><tt>import compute.Factorial;</tt>
+<p><tt>public class MyServer implements Factorial {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; public int computeFactorial( int n )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; {</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int result = 1;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for ( int i = 2; i &lt;
+n; i++ )</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+result = result * i;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; return result;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; }</tt>
+<br><tt>}</tt>
+<h3>
+Registering the Interfaces</h3>
+All interfaces used in ION need to be registered at the server.&nbsp; This
+includes both the server and any callback interfaces.&nbsp; To register
+an interface,&nbsp; run the tool "<tt><a href="Tools.html#blxionreg">blxionreg</a></tt>"
+with the name of the given interface as the argument.
+<p><tt>&nbsp;&nbsp;&nbsp; blxionreg compute.Factor</tt>
+<p>Every time an interface changes, it must be re-registered.
+<p>Once an interface is registered at the server, it may be used either
+as a server interface or a callback interface.&nbsp; Registration is only
+for the server side, clients do not need to register anything.
+<h3>
+Configuring the Server Class</h3>
+An ION server class implements a server interface for access by clients.&nbsp;
+All server classes must be configured in the web initialization file, as
+shown in the following example:
+<ol><tt>&nbsp;&nbsp; ion.name:&nbsp; MyIonServer</tt>
+<br><tt>&nbsp;&nbsp; ion.MyIonServer.className: mypackage.MyServer</tt>
+<br><tt>&nbsp;&nbsp; ion.MyIonServer.interface: compute.Factorial</tt></ol>
+The above lines are configuing the class "<tt>mypackage.MyServe</tt>r".&nbsp;
+The <tt>mypackage.MyServer</tt> class must implement the (registered) interface
+"<tt>compute.Factorial</tt>".&nbsp;
+<p>In addition, the server class may be configured with a callback interface.&nbsp;
+A callback interface may be "<tt>nullable</tt>", in which case the client
+can pass a null instead of a callback object (if the client is not interested
+in receiving callbacks.)&nbsp; If the server is configured to accept nullable
+callback interfaces, it must check to make sure the interface object is
+not null before it makes client callbacks.
+<p>If the server is configured for callbacks, or if the server is interested
+in "connection start" and "connection closed" events, or if the server
+wants to be able to disconnect the call, the server also implements the
+optional interface "<a href="IonServer.html">Ion<tt>Server</tt></a>".&nbsp;
+This interface provides the server object with a callback interface object,
+and lets it know when the connection is started or closed.
+<h3>
+ION Callback processing</h3>
+During processing an ION call, the server can make a "callback" over a
+callback interface.&nbsp; At this point, the server processing stops, and
+the processing continues at the client side.&nbsp; The client side may
+simply return from the callback, or it may make other server calls before
+finally returning.&nbsp; The server side may make more than one callbacks.&nbsp;
+After all the callbacks have finally returned, the original client call
+finally returns.&nbsp; The image below shows a simple ION call, and an
+ION call with one simple callback.
+<br><img SRC="IonCalls.gif" >
+<h3>
+Other Requirements</h3>
+
+<ul>
+<li>
+The ION interface and any classes it requires must be available and in
+the classpath, at both the client and the server.&nbsp; This includes "<tt>blazix.jar</tt>".</li>
+
+<li>
+The HTTP protocol is request-response oriented, and is not designed for
+continuous communication.&nbsp; ION&nbsp; is implemented using the <a href="Dsap.html">DSAP</a>
+protocol.&nbsp; The DSAP protocol -- and therefore ION -- is only available
+in Blazix if Blazix is being used directly as a web-server, and not if
+it is being used as a Java-processing back-end for another front-end sever
+(because the front-end servers are limited to request-response and cannot
+provide continuous communication.)&nbsp; In practice this should not be
+a significant restriction because Blazix happens to be efficient enough
+that it can serve very high volume sites without needing a front-end C++
+server.</li>
+</ul>
+</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

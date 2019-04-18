@@ -1,0 +1,447 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Technical Support">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+Blazix commands and tools</h2>
+Blazix commands are invocations of the java interpreter on various Blazix
+classes.&nbsp; The command files have convenient command lines for these,
+but these can also be used directly.
+<p>Following is a description of the various available commands and tools,
+their associated java classes, and their arguments.
+<br>&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#blxweb">blxweb</a></td>
+
+<td>Blazix Web Server</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#blxejbc">blxejbc</a></td>
+
+<td>Blazix EJB Compiler</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#blxejbs">blxejbs</a></td>
+
+<td>Blazix EJB Server</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td><a href="#blxui">blxui</a></td>
+
+<td>Remote Server Administration Tool</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#blizzard">blizzard</a></td>
+
+<td>Blazix EJB Wizzard</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#jspDebug">jspDebug</a></td>
+
+<td>JSP Debugging support</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#blxcls">blxcls</a></td>
+
+<td>Blazix Cluster Backup Server</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#blxsvrmgr">blxsvrmgr</a></td>
+
+<td>Server Manager</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#blxPacker">blxPacker</a></td>
+
+<td>Web application packager</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td><a href="#blxionreg">blxionreg</a></td>
+
+<td>ION Registration tool</td>
+</tr>
+
+<tr>
+<td>&nbsp;</td>
+
+<td><a href="#i18n">blxI18nTagExtract</a></td>
+
+<td>Blazix Internationalization Tag extractor</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td><a href="#blxjmsmgr">blxjmsmgr</a></td>
+
+<td>JMS topic and queue manager</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td><a href="#blxjmss">blxjmss</a></td>
+
+<td>JMS Server</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td><a href="#autoejbkey">SetAutoEjbKey</a></td>
+
+<td>Enables automatic generation of entity EJB primary keys.</td>
+</tr>
+</table>
+
+<h3>
+<a NAME="blxweb"></a>blxweb: The Blazix Web Server</h3>
+
+<h4>
+java desisoft.server.ServerMain</h4>
+This command starts the web server.&nbsp; (The web server can also be started
+automatically by the Blazix NT service.)&nbsp; It accepts the following
+command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the web server configuration
+file name.
+<br>-t or /t
+<br>&nbsp;&nbsp;&nbsp; This should be followed by cluster onfiguration
+file name.
+<br>-noconsole or /noconsole
+<br>&nbsp;&nbsp;&nbsp; This stops output going to the standard output.&nbsp;
+The output still goes
+<br>&nbsp;&nbsp;&nbsp; to the log file. This option should be used for
+improved performance.
+<br>-log or /log
+<br>&nbsp;&nbsp;&nbsp; This is followed by a "base" name for the log file.&nbsp;
+Default is "weblog".
+<h3>
+<a NAME="blxejbc"></a>blxejbc: The Blazix EJB Compiler</h3>
+
+<h4>
+java desisoft.ejbtools.EjbCompiler</h4>
+The EJB compiler takes an EJB jar file as input.&nbsp; This EJB jar file
+should contain the ejb-jar.xml file and the EJB classes (also see the Blizzard
+tool which can be used to create these.)
+<p>The EJB compiler takes an EJB output jar file containing all the files
+from the input jar file, plus the container-generated classes.&nbsp; This
+jar file can then be deployed in the Blazix EJB server.
+<p>The EJB compiler takes two arguments, an input filename followed by
+an output filename.&nbsp; Other optional arguments are:
+<br>-c or /c
+<br>&nbsp; This is followed by the EJB configuration filename.
+<br>-keepgenerated&nbsp; or /keepgenerated
+<br>&nbsp; If specified, the intermediate files are not deleted.
+<br>-t or /t
+<br>&nbsp;&nbsp; This is followed by the name of a directory.&nbsp; This
+directory
+<br>&nbsp;&nbsp; is used as the temporary directory.
+<p>Example:
+<pre><font size=-1>&nbsp;&nbsp; blxejbc -c c:\Blazix\ejb.ini EjbInput.jar EjbOutput.jar</font></pre>
+
+<h3>
+<a NAME="blxejbs"></a>blxejbs:&nbsp; The Blazix EJB Server</h3>
+
+<h4>
+java desisoft.ejb.server.EjbServer</h4>
+This command starts the EJB server.&nbsp; (The EJB server can also be started
+automatically by the Blazix NT service.)&nbsp; It accepts the following
+command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the EJB server configuration
+file name.
+<br>-noconsole or /noconsole
+<br>&nbsp;&nbsp;&nbsp; This stops output going to the standard output.
+The output still goes
+<br>&nbsp;&nbsp;&nbsp; to the log file.
+<br>-log or /log
+<br>&nbsp;&nbsp;&nbsp; This is followed by a "base" name for the log file.&nbsp;
+Default is "ejblog".
+<h3>
+<a NAME="blxui"></a>blxui:&nbsp; Blazix Remote Server Administration Tool</h3>
+
+<h4>
+java desisoft.blazixui.BlazixUi</h4>
+This is a remote administration tool for Blazix Servers.&nbsp; All the
+server managers to be administered should be specified in the cluster configuration
+file.&nbsp; If a cluster configuration file is not found, the tool will
+attempt to administer the local servers.&nbsp; (But a server manager is
+required for the "Start" or "Configuration" commands to be available.)
+<p>The tool can be used to:
+<ul>
+<li>
+Upload EJB Jar files to the default EJB directory (as configured by the
+"ejbDir" parameter.)</li>
+
+<li>
+Have the EJB servers rescan the default EJB directory to deploy any new
+EJBs and to re-deploy any changed EJBs.</li>
+
+<li>
+Upload Web server WAR files to the default WAR directory (as configured
+by the "warDir" parameter.)&nbsp; <font size=-1><a href="#hotdeploynote">See
+note.</a></font></li>
+
+<li>
+Have the Web servers rescan the default WAR directory to deploy any new
+WARs and to re-deploy any changed WARs.&nbsp; The names of the WAR files,
+minus the ".war" extension, is used as the context URL for deployment.&nbsp;
+The name "default.war" is reserved, and indicates the default application
+(at context URL "/".)</li>
+
+<li>
+View log files.</li>
+
+<li>
+Shutdown the servers.</li>
+
+<li>
+Restart the servers (requires that the Server Manager be running at the
+remote site.)</li>
+
+<li>
+View or upload server configuration files (e.g. web.ini or ejb.ini files.)&nbsp;
+Only one server's configuration file can be viewed at a time, but multiple
+servers' configurations may be uploaded simultaneously.&nbsp; For uploading
+configurations, all selected servers must be of the same type and all selected
+servers must be shut down first.</li>
+</ul>
+<a NAME="hotdeploynote"></a>Note on WAR hot-deployments:&nbsp; If your
+WARs utilize session data, the server administration tool must gather all
+session ids and redistribute them to all servers in the cluster.&nbsp;
+This is necessary because for the existing sessions, all servers must ensure
+that they utilize the previous version of the WAR, and not the new version.&nbsp;
+Otherwise, changing classes in the middle of a session can cause inconsistent
+or erroneous behavior.
+<p>In order for this to happen, if you are redistributing WAR files that
+(a) already exist on the cluster and (b) use sessions, you must make sure
+of the following:
+<ul>
+<li>
+Use "upload and rescan" as one operation.&nbsp; Do not upload first and
+rescan afterwards in this case.</li>
+
+<li>
+Make sure to select all the web-servers that are already running older
+versions of that WAR file.</li>
+</ul>
+Flags:
+<br>-t or /t
+<br>&nbsp;&nbsp; This should be followed by the cluster configuration file
+name.
+<br>-w or /w
+<br>&nbsp; This can be used to specify a single web-server's configuration
+file.
+<br>-e or /e
+<br>&nbsp; This can be used to specify a single EJB-server's configuration
+file.
+<br>-j or /j
+<br>&nbsp; This can be used to specify a single JMS-server's configuration
+file.
+<br>&nbsp;
+<h3>
+<a NAME="blizzard"></a>blizzard:&nbsp; The Blazix EJB Wizzard</h3>
+
+<h4>
+java desisoft.ejbtools.blizzard.Blizzard</h4>
+This tool generates session and entity beans.&nbsp; For generating entity
+beans, at least one data source must be configured in the EJB server configuration
+file.&nbsp; The table for the entity bean should be created first, then
+this tool should be invoked.
+<p>It accepts the following command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the EJB server configuration
+file name.
+<h3>
+<a NAME="blxionreg"></a>blxionreg:&nbsp; Ion Registration tool</h3>
+
+<h4>
+java desisoft.dsap.IonRegister</h4>
+This tool registers Java interfaces for use with the ION technology.&nbsp;
+All interfaces used in ION, either server interfaces or callback interfaces,
+must be registered at the web-server.
+<p>It accepts the following command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the WEB server configuration
+file name.
+<h3>
+<a NAME="blxsvrmgr"></a>blxsvrmgr:&nbsp; Blazix Server Manager</h3>
+
+<h4>
+java desisoft.tools.ServerManager</h4>
+This command starts a server manager at a machine. The server manager manages
+one or more servers at the machine.&nbsp; On Windows machines, the server
+manager will typically be run as an NT or Windows2000 service.&nbsp; On
+Unix machines, it should be started during the machine startup sequence
+using an RC file.
+<p>It accepts the following command line arguments:
+<br>-t or /t
+<br>&nbsp;&nbsp; This should be followed by the <a href="ClusterConfig.html">cluster
+configuration file</a> name.
+<br>&nbsp;
+<h3>
+<a NAME="blxcls"></a>blxcls:&nbsp; Blazix Cluster Backup Server</h3>
+
+<h4>
+java desisoft.cluster.SessionBackupServer</h4>
+This command starts the Blazix cluster server (it can also be started automatically
+by the Blazix NT service.)&nbsp; This command takes the name of the cluster
+server (from the cluster configuration file) which is to be started.&nbsp;
+The name must reference the local host.&nbsp; If no name is given, it will
+search the cluster configuration file for a cluster server name that matches
+the local host.
+<p>It accepts the following command line arguments:
+<br>-t or /t
+<br>&nbsp;&nbsp; This should be followed by the cluster configuration file
+name.
+<h3>
+<a NAME="blxPacker"></a>blxPacker:&nbsp; Blazix Application Packager</h3>
+
+<h4>
+java desisoft.tools.blxpack.BlxPacker</h4>
+This command generates a packaged Web Archive File (.war) from files in
+an application's directory.
+<p>It accepts the following command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the web server configuration
+file name.
+<br>&nbsp;
+<h3>
+<a NAME="jspDebug"></a>jspDebug:&nbsp; Blazix JSP Debugging tool</h3>
+
+<h4>
+java desisoft.tools.JspDebug</h4>
+This command takes one or more JSP files as input, and generates corresponding
+java files which can be given to an IDE for debugging.
+<p>The JSP files should be specified as URLs, starting with "/".
+<p>In addition to the JSP files, it accepts the following command line
+arguments
+<br>-d or /d
+<br>&nbsp;&nbsp;&nbsp; This is followed by the directory where the Java
+files should be placed.
+<br>&nbsp;&nbsp;&nbsp; This argument is required.
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the web server configuration
+file name.
+<p>The generated "main" should be started with the arguments
+<br>"<tt>-c &lt;path-to-web.ini-file></tt>".&nbsp; Once the debug session
+is started, visit the JSP's URL in your browser to activate your breakpoints.
+<h3>
+<a NAME="i18n"></a>blxI18nTagExtract:&nbsp; Blazix Internationalization
+Tag extractor</h3>
+
+<h4>
+java desisoft.tools.i18n.Xltagext</h4>
+This tool can be used to extract all internationalization tags from JSP
+files.
+<p>It accepts the following command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the web server configuration
+file name.
+<h3>
+<a NAME="blxjmsmgr"></a>blxjmsmgr:&nbsp; Blazix JMS topic/queue manager</h3>
+
+<h4>
+java desisoft.jms.manager.JmsManager</h4>
+This tool allows setting up JMS queues and topics.
+<p>It accepts the following command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the JMS server configuration
+file name.
+<h3>
+<a NAME="blxjmss"></a>blxjmss:&nbsp; Blazix JMS server</h3>
+
+<h4>
+java desisoft.jms.main.JmsMain</h4>
+This is the JMS server.
+<p>It accepts the following command line arguments:
+<br>-c or /c
+<br>&nbsp;&nbsp; This should be followed by the JMS server configuration
+file name.
+<br>-log or /log
+<br>&nbsp;&nbsp;&nbsp; This is followed by a "base" name for the log file.&nbsp;
+Default is "jmslog".
+<h3>
+<a NAME="autoejbkey"></a>SetAutoEjbKey: Automatic entity EJB key generation</h3>
+
+<h4>
+java desisoft.ejb.server.EnableAutoPkeys</h4>
+This command must be followed by two arguments:
+<ol>
+<li>
+EJB name.</li>
+
+<li>
+Data Source name.&nbsp; If the data source has been given a JNDI name in
+the configuration file, that JNDI name must be used.&nbsp; The data source
+name can be optionally followed by a username and password for the data
+source.</li>
+</ol>
+In addition, -c or /c can be spedified for the EJB configuration file name.
+<p>This command creates a table in the database referenced by the data
+source, if the table does not already exist.&nbsp; This table is named
+<b><tt>BLAZIX_AUTO_EJB_KEYTABLE</tt></b>,
+and it consists of two columns named <tt>EJBNAME</tt> and <tt>NEXTID</tt>.&nbsp;
+The <tt>NEXTID</tt> column provides a sequentially increasing id that is
+used for generating the keys.
+<p>The EJB name is not case sensitive.
+<p>The data source must be configured and must exist at the time this command
+is run.&nbsp; The EJB does not have to be configured or existing at the
+time this command is run.</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>

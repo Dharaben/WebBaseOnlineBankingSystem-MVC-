@@ -1,0 +1,405 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Desiderata Software">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Win98; U) [Netscape]">
+   <title>Blazix Java Server</title>
+</head>
+<body>
+&nbsp;
+<table BORDER=0 CELLSPACING=0 CELLPADDING=0 COLS=1 WIDTH="100%" >
+<tr>
+<td BGCOLOR="#000099">
+<center>
+<li>
+<i><font color="#FFFF99"><font size=+4>Blazix Java Server</font></font></i></li></center>
+</td>
+</tr>
+
+<tr>
+<td>
+<h2>
+EJB-Server Configuration</h2>
+
+<h3>
+Location</h3>
+The configuration file may be specified using the -c switch in the command
+line, e.g.
+<blockquote>
+<pre>blxejbs -c c:\Mylocation\myejb.ini
+or
+java desisoft.ejb.server.EjbServer -c c:\Mylocation\myejb.ini</pre>
+</blockquote>
+If the file is not specified on the command line, the EJB-server searches
+for a configuration file in the following order:
+<ul>
+<li>
+if the Java property "desisoft.ejb.server.config" is set, it uses its value
+for the configuration file name.</li>
+
+<li>
+it looks in the hardwired locations c:\BlazixEjbServer.ini (for Windows)
+and /usr/blazix/EjbServer.ini (for Unix).</li>
+
+<li>
+it looks for an ejb.ini file in the current directory.</li>
+</ul>
+(The installation process starts off with the last option above.)
+<h3>
+Concepts</h3>
+<b>Name Servers:</b>&nbsp; Any EJB server can act as a "name server".&nbsp;
+A name server may or may not deploy beans of its own.&nbsp; It serves as
+the connection point beteen EJB clients and EJB servers, and allows the
+EJB services to be provided by distributed servers.
+<p>Other EJB servers need to register with one or more name servers.&nbsp;
+In the simplest scenario, there is only one EJB server which acts as a
+name server for all its own EJB home objects.
+<p><b>Data Sources:</b> One or more JDBC "data sources" can be configured
+in the server.&nbsp; All entity beans must have a data source connected
+to them.&nbsp; Additional data sources may be provided to entity beans
+or session beans.&nbsp; To take advantage of Blazix transaction management,
+session beans must only use data sources that are configured in the server&nbsp;&nbsp;
+The data sources can also be directly accessed at the JNDI location java:comp/env/jdbc/&lt;data-source-name>
+and will return an object of type javax.sql.DataSource which can be used
+to obtain pooled connections.
+<p>Data sources are configured by specifying a driverClass and a database
+url, or by providing an implementation of <a href="JdbcResourceFactory.html">desisoft.deploy.JdbcResourceFactory,</a>
+or by providing an ODBC name.
+<p>See <a href="DataSources.html">JDBC data sources</a> for more information.
+<p><b>Cache</b>:&nbsp; The entity bean data can be cached in a combination
+of ways.&nbsp; There are two options, "<tt>loadCache</tt>" and "<tt>storeCache</tt>".&nbsp;
+If "<tt>loadCache</tt>" is on, the entity bean data will be cached for
+database loads, i.e. the data will not be refreshed from persistence storage
+at the beginning of each method invocation.&nbsp; If "<tt>loadCache</tt>"
+is off, the data will be refreshed at the beginning of each method invocation.&nbsp;
+If "<tt>storeCache</tt>" is off, the data will be saved to persistent storage
+at the end of each method invocation.&nbsp; If "<tt>storeCache</tt>" is
+on, the data will be saved to persistent storage only when the entity bean
+is passivated (this happens after a timeout period) or when the the server
+is gracefully shut down.&nbsp; The "<tt>storeCache</tt>" may also be set
+to "<tt>nochange</tt>".&nbsp; This indicates that the server will try to
+determine if a method call has changed the data.&nbsp; If data has not
+been changed, it will not be written back to the persistent storage.&nbsp;
+If the EJB has complex fields, server will not try to determine if data
+has changed because in this case the overhead may exceed the performance
+benefits.&nbsp; Therefore in EJBs with complex fields, "<tt>nochange</tt>"
+is identical to "<tt>off</tt>".&nbsp; In bean-managed persistence also
+"<tt>nochange</tt>" is identical to "<tt>off</tt>" because the server is
+not managing any fields that it can check for changes.
+<p>The defaults are "<tt>on</tt>" for "<tt>loadCache</tt>" and "<tt>nochange</tt>"
+for "<tt>storeCache</tt>".
+<p>The tradeoffs are as follows.
+<p>If "<tt>loadCache</tt>" is on, the performance is better but any third
+party changes to the database may not become visible to the entity bean.&nbsp;
+If "<tt>loadCache</tt>" is off the performance is slower but the entity
+bean will always have the most current data in the database.
+<p>If "<tt>storeCache</tt>" is on, the performance will be better but entity
+bean changes will not be reflected in the database immediately.&nbsp; A
+more serious concern is that if the EJB server crashes, or is brought down
+ungracefully (e.g. by typing a Contrl/C in the console), the entity bean
+changes may not get written back at all.
+<p>For clustering, "<tt>loadCache</tt>" <b>must</b> be set to "<tt>off</tt>"&nbsp;
+if the EJB home is being distributed among more than one EJB servers.&nbsp;
+The "<tt>storeCache</tt>" may be left at the default value of "<tt>nochange</tt>".
+<h3>
+Configuration Parameters</h3>
+The following configuration file parameters are available:
+<br>&nbsp;
+<br>&nbsp;
+<table BORDER CELLSPACING=0 CELLPADDING=0 WIDTH="100%" >
+<tr>
+<td>server.port</td>
+
+<td>Server port number, e.g. "2050".&nbsp; It must be an integer.</td>
+</tr>
+
+<tr>
+<td>server.address</td>
+
+<td>Server address (primarily for use on machines with multiple IP address.)&nbsp;
+This must be a valid hostname or an IP addresses.</td>
+</tr>
+
+<tr>
+<td>admin.port</td>
+
+<td>Port for administration access.&nbsp; If admin.port or admin.password
+are not specified, server will not be remotely administerable.&nbsp; If
+running inside a firewall, the admin port should be selected so that it
+is NOT accessible through the firewall.</td>
+</tr>
+
+<tr>
+<td>admin.password</td>
+
+<td>Password for administration access.</td>
+</tr>
+
+<tr>
+<td>ejbDir</td>
+
+<td>Path to the directory containing EJB Jar files.&nbsp; These EJB Jar
+files will be automatically loaded.
+<p>&nbsp;The Jar file must contain a META-INF/ejb-jar.xml describing it.&nbsp;
+It must also contain the&nbsp; necessary classes.&nbsp; The Blazix EJB
+compiler and the Blizzard EJB Wizard can be used in creating EJB Jar files.
+<p>Loading an ejbJar automatically registers the names of the Enterprise
+Beans in it, so other parameters of the form ejb.&lt;name>.param can use
+these names.</td>
+</tr>
+
+<tr>
+<td>ejbJar</td>
+
+<td>Path to an EJB Jar file.
+<br>This is an alternate method of loading EJBs, other than "ejbDir".&nbsp;
+Live deployment and re-deployment are not available for EJB Jar files that
+are loaded using this method instead of by placing them in the directory
+specified by "ejbDir".</td>
+</tr>
+
+<tr>
+<td>ejb.protocol</td>
+
+<td>The protocol to use for EJB communications.&nbsp; This can either be
+<tt>JRMP</tt>
+or <tt>IIOP</tt>.&nbsp; All existing EJBs must be recompiled after this
+setting has been changed.&nbsp; The server must be restarted, and the clients
+must be changed to use the appropriate factory.
+<br>This must match the ejb.protocol setting in web-server configuration
+files.</td>
+</tr>
+
+<tr>
+<td>ejb.loadCache</td>
+
+<td>Cacheing behavior for loading data from persistent storage.&nbsp; May
+be "off" or "on".&nbsp; This parameter provides the EJB server's default
+behavior, and may be overridden for individual EJBs.</td>
+</tr>
+
+<tr>
+<td>ejb.storeCache</td>
+
+<td>Cacheing behavior for savubg data to persistent storage.&nbsp; May
+be "off", "on" or "nochange".&nbsp; This parameter provides the EJB server's
+default behavior, and may be overridden for individual EJBs.</td>
+</tr>
+
+<tr>
+<td>iiop.iorFile</td>
+
+<td>This is only available if the ejb.protocol is IIOP.&nbsp; This should
+point to the path of a file.&nbsp; The IOR string will be written to this
+file.</td>
+</tr>
+
+<tr>
+<td>defaultDataSource</td>
+
+<td>A default data source to use for entity beans, if ejb.&lt;name>.dataSource
+is not specified.&nbsp; This should be set to the name of a configured
+datasource.</td>
+</tr>
+
+<tr>
+<td>unuse.timeout</td>
+
+<td>Timeout in seconds before unused EJB bean objects will be discarded.&nbsp;
+(Entity beans getting discarded has only a performance impact, Session
+beans are lost when discarded.)</td>
+</tr>
+
+<tr>
+<td>ususe.interval</td>
+
+<td>How often the check for "unuse.timeout" should be done.&nbsp; This
+should not be made too small, otherwise performance will degrade.</td>
+</tr>
+
+<tr>
+<td>isNameServer</td>
+
+<td>Set to true to indicate whether the EJB server should also operate
+as a name server.</td>
+</tr>
+
+<tr>
+<td>ejb.nameServer</td>
+
+<td>An EJB name server with which the EJB server should register all its
+HOME objects.&nbsp; The parameter can be repeated multiple times, to register
+with multiple name servers.</td>
+</tr>
+
+<tr>
+<td>license.file</td>
+
+<td>Path of license file</td>
+</tr>
+
+<tr>
+<td>startup.asynchronous</td>
+
+<td>Name of a class that implements "Runnable".&nbsp; This class will be
+instantiated and started in a separate thread during server startup.</td>
+</tr>
+
+<tr>
+<td>startup.synchronous</td>
+
+<td>Name of a class that implemens "Runnable".&nbsp; This class will be
+intantiated and its "run" method will be called during server startup.&nbsp;
+Server startup wil not proceed until the "run" method returns.</td>
+</tr>
+
+<tr>
+<td>ejb.name</td>
+
+<td>This is not used, because the EJB names are defined by loading EJB
+Jar files using ejbJar.</td>
+</tr>
+
+<tr>
+<td>ejb.&lt;name>.jndiName</td>
+
+<td>The JNDI name at which the EJB will be available.&nbsp; If not specified,
+the JNDI name is the same as the EJB name.</td>
+</tr>
+
+<tr>
+<td>ejb.&lt;name>.dataSource</td>
+
+<td>DataSource name for Entity beans.&nbsp; All entity beans must have
+a data source.</td>
+</tr>
+
+<tr>
+<td>ejb.&lt;name>.table</td>
+
+<td>Name of the database table for storing entity bean data.&nbsp; All
+entity beans must have a database table.</td>
+</tr>
+
+<tr>
+<td>ejb.&lt;name>.field.*</td>
+
+<td>The field names in the database table can be the same as the entity
+bean field names.&nbsp; But if the field names are different, the mapping
+must be provided using this parameter.&nbsp; E.g.
+<br>ejb.myEjb.field.beanField: tableField</td>
+</tr>
+
+<tr>
+<td>ejb.&lt;name>.upcaseColumnNames</td>
+
+<td>This can have a true or false value.&nbsp; If set to false, column
+names will not be upper-cased before being given to the database.&nbsp;&nbsp;
+The default is true.&nbsp; This field is ignored if a column map has been
+specified in the ejb-jar.xml.</td>
+</tr>
+
+<tr>
+<td>ejb.&lt;name>.loadCache</td>
+
+<td>Data loading cache&nbsp; behavior, specified for one particular EJB.</td>
+</tr>
+
+<tr>
+<td>ejb.&lt;name>.storeCache</td>
+
+<td>Data storing cache behavior, specified for one particular EJB.</td>
+</tr>
+
+<tr>
+<td>authClass</td>
+
+<td>If provided, it must be the name of a class that implements <a href="AuthCheck.html">desisoft.deploy.AuthCheck</a>&nbsp;
+The class will be instantiated, and all username/password values for the
+EJBs will be given to the instantiated object&nbsp; for authentication.&nbsp;
+Blazix provides a default file-based implementation of this class, see
+<a href="Authorization.html">Authorization.</a></td>
+</tr>
+
+<tr>
+<td>authParam.*</td>
+
+<td>Initialization parameters to be passed to the object instantiated for
+application.&lt;name>.authClass.&nbsp; The default file-based authorization
+requires one initialization parameter, application.&lt;name>.authParam.file,
+which should be set to the path of the file containing usernames and passwords.</td>
+</tr>
+
+<tr>
+<td>dataSource.name</td>
+
+<td>Name of a dataSource</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.jndiName</td>
+
+<td>JNDI name for dataSource, if not the same as the dataSource name.</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.driverClass</td>
+
+<td>JDBC driver's class name</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.url</td>
+
+<td>URL to be provided to JDBC driver</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.providerClass</td>
+
+<td>Class providing implementation of desisoft.deploy.JdbcResourceFactory</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.param.*</td>
+
+<td>Any initialization parameters to be passed to the implementation of
+desisoft.deploy.JdbcResourceFactory</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.odbc</td>
+
+<td>ODBC name for data source.</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.username</td>
+
+<td>Username for using in obtaining connections</td>
+</tr>
+
+<tr>
+<td>dataSource.&lt;name>.password</td>
+
+<td>Password for using in obtaining connections</td>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+</table>
+
+<p>&nbsp;</td>
+</tr>
+
+<tr>
+<td></td>
+</tr>
+</table>
+
+</body>
+</html>
